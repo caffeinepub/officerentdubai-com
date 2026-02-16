@@ -1,13 +1,12 @@
 # Specification
 
 ## Summary
-**Goal:** Replace the Agent Arena Internet Identity entry flow with an Agent Code gate (050702) and enforce the same code for backend listing management.
+**Goal:** Add Permit Number, Furnishing Status (Furnished / Semi-Furnished / Unfurnished), and Washrooms to property data, agent create/edit flow, public listings UI, and public search filtering.
 
 **Planned changes:**
-- Update `/agent` to show an English-only Agent Code input + submit; accept only `050702`, persist authorization locally, and redirect to `/agent/dashboard`.
-- Protect all `/agent/*` routes (`/agent/dashboard`, `/agent/properties`, `/agent/properties/new`, `/agent/properties/edit/:id`) based on the locally-stored Agent Code authorization state; show an English “Access Denied” screen with a link/button back to `/agent` when unauthorized.
-- Update the Agent Dashboard logout to clear the locally-stored Agent Code authorization state (and related cached agent data) and return to `/agent`.
-- Enforce Agent Code authorization on the backend for property create/update/delete (must be exactly `050702`); keep all public property queries accessible without any agent code.
-- Update the frontend data layer so create/update/delete mutations always send the agent code to the backend, and show clear English errors when rejected due to missing/invalid code (guiding users back to `/agent`).
+- Extend the backend Property model and create/update params to store permit number, furnishing status, and washrooms; ensure all public property query methods (including getPropertyById) return these fields.
+- Update Agent Arena property create/edit forms to input Permit Number, select Furnishing Status (3 options), and enter Washrooms, and send/persist these values on create/update (with edit pre-fill).
+- Update public listing card and listing details page to display Permit Number, Furnishing Status, and Washrooms with clear English labels and graceful handling of missing values.
+- Add a Furnishing Status filter to the public PropertySearchBar (including an unset state) and make search results respect this filter when applied.
 
-**User-visible outcome:** Users enter agent code `050702` at `/agent` to access the Agent Arena dashboard and manage listings; unauthorized users see Access Denied, and logging out clears access until the code is entered again. Public listing browsing remains available without any login/code.
+**User-visible outcome:** Agents can add/edit permit number, furnishing status, and washrooms for listings; users can see these fields on listing cards and details, and can filter search results by furnishing status.

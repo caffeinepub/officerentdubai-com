@@ -2,72 +2,11 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-replace-the-agent-arena-entry-flow-at-route-agent-to-use-an-agent-code-gate-instead-of-internet-identity-login-signup-show-a-single-input-for-the-agent-code-and-a-submit-button-when-the-correct-code-050702-is-entered-persist-the-authorized-state-locally-e-g-localstorage-and-navigate-to-agent-dashboard-all-user-facing-text-must-be-in-english",
-      "featureTitle": "Replace the Agent Arena entry flow at route \"/agent\" to use an \"Agent Code\" gate instead of Internet Identity login/signup: show a single input for the agent code and a submit button; when the correct code \"050702\" is entered, persist the authorized state locally (e.g., localStorage) and navigate to \"/agent/dashboard\". All user-facing text must be in English.",
+      "featureId": "feature-update-the-agent-arena-property-create-edit-form-to-allow-agents-to-input-permit-number-select-furnishing-status-furnished-semi-furnished-unfurnished-and-enter-washrooms-number-and-ensure-these-values-are-sent-in-create-update-mutations-to-the-backend",
+      "featureTitle": "Update the Agent Arena property create/edit form to allow agents to input Permit Number, select Furnishing Status (Furnished / Semi-Furnished / Unfurnished), and enter Washrooms (number), and ensure these values are sent in create/update mutations to the backend.",
       "files": [
-        "frontend/src/pages/agent/AgentArenaEntryPage.tsx",
-        "frontend/src/utils/agentCodeAuth.ts"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "blob-storage@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-12"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-update-route-protection-for-all-agent-arena-pages-agent-dashboard-agent-properties-agent-properties-new-agent-properties-edit-id-to-authorize-access-based-on-the-locally-stored-agent-code-authorization-state-not-internet-identity-identity-role-if-unauthorized-show-an-access-denied-screen-with-a-button-link-back-to-agent",
-      "featureTitle": "Update route protection for all Agent Arena pages (\"/agent/dashboard\", \"/agent/properties\", \"/agent/properties/new\", \"/agent/properties/edit/:id\") to authorize access based on the locally-stored Agent Code authorization state (not Internet Identity identity/role). If unauthorized, show an \"Access Denied\" screen with a button/link back to \"/agent\".",
-      "files": [
-        "frontend/src/components/auth/AgentProtectedRoute.tsx"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "blob-storage@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-13"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-change-the-agent-dashboard-logout-behavior-to-log-out-of-the-agent-code-session-clear-the-locally-stored-authorization-state-and-any-related-cached-agent-data-and-then-return-the-user-to-the-agent-arena-entry-page",
-      "featureTitle": "Change the Agent Dashboard logout behavior to log out of the Agent Code session (clear the locally-stored authorization state and any related cached agent data) and then return the user to the Agent Arena entry page.",
-      "files": [
-        "frontend/src/pages/agent/AgentDashboardPage.tsx"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "blob-storage@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-14"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-update-the-frontend-data-layer-so-that-create-update-delete-property-mutations-always-send-the-agent-code-to-the-backend-and-display-a-clear-english-error-message-when-the-backend-rejects-an-operation-due-to-an-invalid-missing-agent-code",
-      "featureTitle": "Update the frontend data layer so that create/update/delete property mutations always send the agent code to the backend, and display a clear English error message when the backend rejects an operation due to an invalid/missing agent code.",
-      "files": [
+        "frontend/src/components/agent/PropertyForm.tsx",
         "frontend/src/hooks/useQueries.ts",
-        "frontend/src/pages/agent/ManagePropertiesPage.tsx",
         "frontend/src/pages/agent/PropertyEditorPage.tsx"
       ],
       "components": [
@@ -80,7 +19,50 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-16"
+        "REQ-26"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-display-permit-number-furnishing-status-and-washrooms-on-the-public-frontend-listings-ui-including-the-listing-card-and-the-listing-details-page-using-clear-english-labels",
+      "featureTitle": "Display Permit Number, Furnishing Status, and Washrooms on the public frontend listings UI, including the listing card and the listing details page, using clear English labels.",
+      "files": [
+        "frontend/src/components/listings/PropertyCard.tsx",
+        "frontend/src/pages/ListingDetailsPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-27"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-a-public-search-filter-for-furnishing-status-to-the-existing-propertysearchbar-and-make-search-results-respect-this-filter-when-applied",
+      "featureTitle": "Add a public search filter for Furnishing Status to the existing PropertySearchBar and make search results respect this filter when applied.",
+      "files": [
+        "frontend/src/components/search/PropertySearchBar.tsx",
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/pages/PublicListingsPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-28"
       ],
       "confidence": "high"
     }

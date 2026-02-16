@@ -1,107 +1,114 @@
 {
   "kind": "build_request",
-  "title": "Replace Agent Arena login/signup with Agent Code gate (050702) for backend access",
-  "priority": "high",
+  "title": "Add Permit Number + Furnishing Status (all options) + Washroom Count to listings and Agent Arena",
+  "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-12",
-      "text": "Replace the Agent Arena entry flow at route \"/agent\" to use an \"Agent Code\" gate instead of Internet Identity login/signup: show a single input for the agent code and a submit button; when the correct code \"050702\" is entered, persist the authorized state locally (e.g., localStorage) and navigate to \"/agent/dashboard\". All user-facing text must be in English.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "recent-messages-4"
-        ],
-        "quotes": [
-          "STILL I AM NOT ABLE TO LOGIN AND SIGN UP THROUGH BACK END DO ONE THING CHANGE THE LOGIN AND SIGN UP SET UP. INSTED OF LOGIN AND SIGN UP PUT AGENT CODE TO ENTER THE AGENT CODE IS 050702 . ONLY THROUGH THIS CODE CAN ACCESS THE BANK END TO ADD AND EDIT LISTING"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Visiting /agent no longer shows an Internet Identity login button; it shows an Agent Code input and submit action.",
-        "Entering code 050702 grants access and redirects the user to /agent/dashboard.",
-        "Entering an incorrect code shows a clear error message (English) and does not grant access.",
-        "Refreshing the page after successful entry keeps the user authorized without re-entering the code (until they explicitly log out)."
-      ]
-    },
-    {
-      "id": "REQ-13",
-      "text": "Update route protection for all Agent Arena pages (\"/agent/dashboard\", \"/agent/properties\", \"/agent/properties/new\", \"/agent/properties/edit/:id\") to authorize access based on the locally-stored Agent Code authorization state (not Internet Identity identity/role). If unauthorized, show an \"Access Denied\" screen with a button/link back to \"/agent\".",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "recent-messages-4"
-        ],
-        "quotes": [
-          "ONLY THROUGH THIS CODE CAN ACCESS THE BANK END TO ADD AND EDIT LISTING"
-        ]
-      },
-      "acceptanceCriteria": [
-        "If the agent code has not been accepted, navigating directly to any /agent/* page shows Access Denied and a link to /agent.",
-        "If the agent code has been accepted, /agent/* pages render normally.",
-        "No calls to user-role-based gating are required to allow access once the agent code is accepted."
-      ]
-    },
-    {
-      "id": "REQ-14",
-      "text": "Change the Agent Dashboard logout behavior to log out of the Agent Code session (clear the locally-stored authorization state and any related cached agent data) and then return the user to the Agent Arena entry page.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "recent-messages-4"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Clicking Logout clears the saved agent-code authorization state.",
-        "After Logout, navigating to /agent/dashboard (or any /agent/* route) is blocked until the correct agent code is entered again.",
-        "Logout flow does not require Internet Identity."
-      ]
-    },
-    {
-      "id": "REQ-15",
-      "text": "Enforce the Agent Code on the backend for all listing management operations: property creation, property update, and property deletion must require the correct agent code \"050702\"; public listing queries must remain publicly accessible without any agent code.",
+      "id": "REQ-25",
+      "text": "Extend the backend Property model and create/update params to store (a) permit number, (b) furnishing status with all options (Furnished, Semi-Furnished, Unfurnished), and (c) number of washrooms; ensure these fields are returned by all public property query methods and by getPropertyById.",
       "target": "backend",
       "source": {
         "messageIds": [
-          "recent-messages-4"
+          "msg-5",
+          "msg-6"
         ],
         "quotes": [
-          "AGENT CODE IS 050702 . ONLY THROUGH THIS CODE CAN ACCESS THE BANK END TO ADD AND EDIT LISTING"
+          "please add the furnished , unfurnished filter option in front end and show number of washroom in listings add option in back end to add number of washroom and furnishing status.",
+          "include all option and add listing permit number in front end and add option to enter permit number in back end"
         ]
       },
       "acceptanceCriteria": [
-        "Backend rejects create/update/delete requests when the provided agent code is missing or incorrect (with a clear trap message).",
-        "Backend accepts create/update/delete requests when the provided agent code is exactly 050702.",
-        "All public query endpoints for listings (getAllProperties, filter queries, getPropertyById) still work without any agent code.",
-        "Access control is no longer dependent on Internet Identity authentication for create/update/delete."
+        "Backend Property type includes new fields for permit number, furnishing status, and washrooms.",
+        "Backend CreatePropertyParams (and the update path) accepts the new fields and persists them on create/update.",
+        "All property query functions (getAllProperties, getPropertiesBy*, getPropertyById, etc.) return the new fields to the frontend without trapping or omitting them."
       ]
     },
     {
-      "id": "REQ-16",
-      "text": "Update the frontend data layer so that create/update/delete property mutations always send the agent code to the backend, and display a clear English error message when the backend rejects an operation due to an invalid/missing agent code.",
-      "target": "both",
+      "id": "REQ-26",
+      "text": "Update the Agent Arena property create/edit form to allow agents to input Permit Number, select Furnishing Status (Furnished / Semi-Furnished / Unfurnished), and enter Washrooms (number), and ensure these values are sent in create/update mutations to the backend.",
+      "target": "frontend",
       "source": {
         "messageIds": [
-          "recent-messages-4"
+          "msg-5",
+          "msg-6"
+        ],
+        "quotes": [
+          "add option in back end to add number of washroom and furnishing status",
+          "add option to enter permit number in back end"
         ]
       },
       "acceptanceCriteria": [
-        "Creating a property from the Agent Arena succeeds only when the agent code gate has been passed.",
-        "Editing and deleting a property from the Agent Arena succeeds only when the agent code gate has been passed.",
-        "If the agent code is cleared/absent and a mutation is attempted, the UI shows an English error indicating access is not authorized and guides the user back to /agent to enter the agent code again."
+        "On /agent/properties/new and /agent/properties/edit/:id, the form includes fields labeled in English: \"Permit Number\", \"Furnishing Status\", and \"Washrooms\".",
+        "Furnishing Status offers exactly 3 options: Furnished, Semi-Furnished, Unfurnished.",
+        "Creating a property saves these values; editing a property pre-fills the fields from existing listing data and saving updates them.",
+        "If required validation is applied, validation messages (if any) are in English."
+      ]
+    },
+    {
+      "id": "REQ-27",
+      "text": "Display Permit Number, Furnishing Status, and Washrooms on the public frontend listings UI, including the listing card and the listing details page, using clear English labels.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5",
+          "msg-6"
+        ],
+        "quotes": [
+          "show number of washroom in listings",
+          "add listing permit number in front end"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Property cards show the washrooms count and/or permit number in a readable way without breaking the existing layout.",
+        "Listing details page shows Permit Number, Furnishing Status, and Washrooms with English labels.",
+        "If a listing is missing one of these values (e.g., older data), the UI handles it gracefully (e.g., hides the row or shows \"N/A\" in English) without crashing."
+      ]
+    },
+    {
+      "id": "REQ-28",
+      "text": "Add a public search filter for Furnishing Status to the existing PropertySearchBar and make search results respect this filter when applied.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-5",
+          "msg-6"
+        ],
+        "quotes": [
+          "please add the furnished , unfurnished filter option in front end",
+          "include all option"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Public search UI includes a \"Furnishing Status\" filter with options: Furnished, Semi-Furnished, Unfurnished (and an empty/unset state).",
+        "When Furnishing Status is selected and the user clicks \"Search Properties\", the results list updates to include only listings matching that furnishing status (in addition to any other active filters).",
+        "When Furnishing Status is not selected, results behavior remains unchanged from before this update.",
+        "All user-facing text for this filter is in English."
       ]
     }
   ],
   "constraints": [
-    "Backend must remain a single Motoko actor in backend/main.mo (no additional backend services).",
-    "Do not edit any files under frontend immutablePaths: frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, frontend/src/components/ui.",
-    "Public listings browsing/search must remain accessible without login/agent code."
+    "Backend must remain a single Motoko actor with all logic in backend/main.mo (no additional backend services).",
+    "Only create/update/delete property operations must remain protected by the Agent Code \"050702\"; public listing queries must remain publicly accessible.",
+    "Do not edit any files under frontend/src/components/ui or any paths listed in frontend.immutablePaths; compose those components instead.",
+    "Use English for all user-facing text."
   ],
   "nonGoals": [
-    "Implementing or fixing Internet Identity login/signup for agents.",
-    "Adding multiple agent codes, rotating codes, or admin management UI for codes.",
-    "Adding third-party authentication providers."
+    "Do not change the fixed WhatsApp number (+971 553723617).",
+    "Do not add third-party authentication or external databases.",
+    "Do not redesign unrelated parts of the UI beyond what is necessary to add the new fields/filters."
   ],
   "imageRequirements": {
     "required": [],
     "edits": []
+  },
+  "userProfileUpdate": {
+    "goalsToAdd": [],
+    "goalsToRemove": [],
+    "preferencesToAdd": [],
+    "preferencesToRemove": [],
+    "miscToAdd": [],
+    "miscToRemove": [],
+    "fieldsToSet": {},
+    "fieldsToDelete": []
   }
 }

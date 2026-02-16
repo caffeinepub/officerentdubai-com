@@ -12,22 +12,31 @@ import type { Principal } from '@icp-sdk/core/principal';
 
 export interface CreatePropertyParams {
   'title' : string,
+  'furnishingStatus' : FurnishingStatus,
   'propertyType' : PropertyType,
+  'permitNumber' : string,
   'description' : string,
   'price' : bigint,
   'areaSquareFeet' : bigint,
   'location' : string,
+  'numberOfWashrooms' : bigint,
   'images' : Array<ExternalBlob>,
 }
 export type ExternalBlob = Uint8Array;
+export type FurnishingStatus = { 'semiFurnished' : null } |
+  { 'furnished' : null } |
+  { 'unfurnished' : null };
 export interface Property {
   'id' : bigint,
   'title' : string,
+  'furnishingStatus' : FurnishingStatus,
   'propertyType' : PropertyType,
+  'permitNumber' : string,
   'description' : string,
   'price' : bigint,
   'areaSquareFeet' : bigint,
   'location' : string,
+  'numberOfWashrooms' : bigint,
   'images' : Array<ExternalBlob>,
 }
 export type PropertyType = { 'retail' : null } |
@@ -65,31 +74,32 @@ export interface _SERVICE {
   '_caffeineStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
-  'createProperty' : ActorMethod<[CreatePropertyParams, string], undefined>,
-  'deleteProperty' : ActorMethod<[bigint, string], undefined>,
+  'createProperty' : ActorMethod<[CreatePropertyParams], undefined>,
+  'deleteProperty' : ActorMethod<[bigint], undefined>,
   'getAllProperties' : ActorMethod<[], Array<Property>>,
+  'getAutocompleteSuggestions' : ActorMethod<
+    [string, [] | [bigint]],
+    Array<string>
+  >,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
-  'getPropertiesByAllFilters' : ActorMethod<
-    [string, PropertyType, bigint, bigint, bigint, bigint],
-    Array<Property>
-  >,
   'getPropertiesByAreaRange' : ActorMethod<[bigint, bigint], Array<Property>>,
-  'getPropertiesByLocation' : ActorMethod<[string], Array<Property>>,
-  'getPropertiesByLocationAndType' : ActorMethod<
-    [string, PropertyType],
+  'getPropertiesByFurnishingStatus' : ActorMethod<
+    [FurnishingStatus],
     Array<Property>
   >,
+  'getPropertiesByLocation' : ActorMethod<[string], Array<Property>>,
   'getPropertiesByPriceRange' : ActorMethod<[bigint, bigint], Array<Property>>,
   'getPropertiesByType' : ActorMethod<[PropertyType], Array<Property>>,
+  'getPropertiesWithFullFilters' : ActorMethod<
+    [string, PropertyType, FurnishingStatus, bigint, bigint, bigint, bigint],
+    Array<Property>
+  >,
   'getPropertyById' : ActorMethod<[bigint], Property>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
-  'updateProperty' : ActorMethod<
-    [bigint, CreatePropertyParams, string],
-    undefined
-  >,
+  'updateProperty' : ActorMethod<[bigint, CreatePropertyParams], undefined>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

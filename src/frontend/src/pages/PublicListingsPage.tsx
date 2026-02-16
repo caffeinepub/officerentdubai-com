@@ -2,13 +2,14 @@ import { useState } from 'react';
 import PropertySearchBar from '../components/search/PropertySearchBar';
 import PropertyCard from '../components/listings/PropertyCard';
 import { useSearchProperties } from '../hooks/useQueries';
-import type { PropertyType } from '../backend';
+import type { PropertyType, FurnishingStatus } from '../backend';
 import { Loader2 } from 'lucide-react';
 
 export default function PublicListingsPage() {
   const [searchFilters, setSearchFilters] = useState<{
     location?: string;
     propertyType?: PropertyType;
+    furnishingStatus?: FurnishingStatus;
     minPrice?: bigint;
     maxPrice?: bigint;
     minArea?: bigint;
@@ -22,6 +23,7 @@ export default function PublicListingsPage() {
   const handleSearch = (filters: {
     location?: string;
     propertyType?: PropertyType;
+    furnishingStatus?: FurnishingStatus;
     minPrice?: bigint;
     maxPrice?: bigint;
     minArea?: bigint;

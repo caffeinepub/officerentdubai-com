@@ -1,16 +1,19 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 7,
+  "projectStateVersion": 17,
   "summary": "Build officerentdubai.com, a commercial property rental portal with a searchable/filterable listings frontend and an agent backend (\"Agent Arena\") to manage properties, including photos, with WhatsApp contact to a fixed number. Agent Arena access should be gated by an \"Agent Code\" entry (050702) instead of login/signup.",
   "architectural_notes": [
     "Project is a commercial property rental portal with separate public frontend and agent backend (\"Agent Arena\").",
     "WhatsApp contact should always redirect to +971 553723617.",
-    "Agent Arena authentication should be replaced by a simple Agent Code gate (code: 050702) to access add/edit listing features."
+    "Agent Arena authentication should be replaced by a simple Agent Code gate (code: 050702) to access add/edit listing features.",
+    "Google Search Console verification file provided: serve /googlea70a8e0aae5c8967.html at site root with content exactly: \"google-site-verification: googlea70a8e0aae5c8967.html\" (ensure SPA routing does not intercept).",
+    "Extend property/listing schema to include furnishingStatus (Furnished/Semi-Furnished/Unfurnished), washrooms (number), and permitNumber (string) and persist these fields in Agent Arena backend + expose in public queries.",
+    "WhatsApp contact deep-link should prefill a message that includes the listing title (still always targeting +971 553723617)."
   ],
   "known_issues": [
     "Agent Arena backend: agents are currently unable to sign up and/or log in (authentication flow failing)."
   ],
-  "isFixRequest": true,
+  "isFixRequest": false,
   "existing_features": [
     {
       "id": "feature-create-the-public-frontend-for-officerrentdubai-com-with-a-listings-search-section-that-includes-1-a-location-text-search-bar-2-a-commercial-type-filter-with-exactly-two-options-office-and-retail-3-an-area-sqft-filter-4-a-price-filter-and-5-a-search-action-button-that-applies-the-entered-filters-to-the-listings-results",
@@ -107,6 +110,72 @@
         "REQ-16"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-support-google-search-console-html-file-verification-by-serving-a-provided-verification-html-file-at-the-website-root-e-g-https-officerentdubai-com-verification-file-html-as-a-static-asset-without-being-intercepted-by-spa-routing",
+      "title": "Support Google Search Console HTML file verification by serving a provided verification HTML file at the website root (e.g., https://officerentdubai.com/<verification-file>.html) as a static asset, without being intercepted by SPA routing.",
+      "reqIds": [
+        "REQ-17"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-the-google-search-console-html-verification-file-at-the-website-root-by-creating-a-static-file-named-exactly-googlea70a8e0aae5c8967-html-under-the-frontend-public-static-assets-with-the-file-contents-exactly-google-site-verification-googlea70a8e0aae5c8967-html",
+      "title": "Add the Google Search Console HTML verification file at the website root by creating a static file named exactly \"googlea70a8e0aae5c8967.html\" under the frontend public static assets, with the file contents exactly: \"google-site-verification: googlea70a8e0aae5c8967.html\".",
+      "reqIds": [
+        "REQ-18",
+        "REQ-20"
+      ],
+      "version": 2
+    },
+    {
+      "id": "feature-remove-or-neutralize-the-existing-placeholder-verification-file-frontend-public-google-site-verification-html-so-it-no-longer-presents-placeholder-instructional-content-in-production",
+      "title": "Remove or neutralize the existing placeholder verification file (frontend/public/google-site-verification.html) so it no longer presents placeholder/instructional content in production.",
+      "reqIds": [
+        "REQ-19",
+        "REQ-21"
+      ],
+      "version": 2
+    },
+    {
+      "id": "feature-add-a-react-query-hook-to-fetch-location-building-autocomplete-suggestions-from-the-backend-as-the-user-types-using-a-debounced-input-value-and-only-querying-when-the-input-has-non-whitespace-content",
+      "title": "Add a React Query hook to fetch location/building autocomplete suggestions from the backend as the user types, using a debounced input value and only querying when the input has non-whitespace content.",
+      "reqIds": [
+        "REQ-23"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-public-listings-search-location-input-in-the-existing-propertysearchbar-to-display-an-autocomplete-typeahead-dropdown-while-the-user-types-the-dropdown-must-be-selectable-with-mouse-and-keyboard-and-selecting-a-suggestion-must-populate-the-location-input-with-that-suggestion-in-plain-english-ui-behavior",
+      "title": "Update the public listings search Location input (in the existing PropertySearchBar) to display an autocomplete/typeahead dropdown while the user types. The dropdown must be selectable with mouse and keyboard, and selecting a suggestion must populate the Location input with that suggestion in plain English UI behavior.",
+      "reqIds": [
+        "REQ-24"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-agent-arena-property-create-edit-form-to-allow-agents-to-input-permit-number-select-furnishing-status-furnished-semi-furnished-unfurnished-and-enter-washrooms-number-and-ensure-these-values-are-sent-in-create-update-mutations-to-the-backend",
+      "title": "Update the Agent Arena property create/edit form to allow agents to input Permit Number, select Furnishing Status (Furnished / Semi-Furnished / Unfurnished), and enter Washrooms (number), and ensure these values are sent in create/update mutations to the backend.",
+      "reqIds": [
+        "REQ-26"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-display-permit-number-furnishing-status-and-washrooms-on-the-public-frontend-listings-ui-including-the-listing-card-and-the-listing-details-page-using-clear-english-labels",
+      "title": "Display Permit Number, Furnishing Status, and Washrooms on the public frontend listings UI, including the listing card and the listing details page, using clear English labels.",
+      "reqIds": [
+        "REQ-27"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-public-search-filter-for-furnishing-status-to-the-existing-propertysearchbar-and-make-search-results-respect-this-filter-when-applied",
+      "title": "Add a public search filter for Furnishing Status to the existing PropertySearchBar and make search results respect this filter when applied.",
+      "reqIds": [
+        "REQ-28"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -161,6 +230,58 @@
       "summary": "Enforce the Agent Code on the backend for all listing management operations: property creation, property update, and property deletion must require the correct agent code \"050702\"; public listing queries must remain publicly accessible without any agent code.",
       "reqIds": [
         "REQ-15"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-17",
+      "summary": "Add Google Search Console HTML file verification support (serve a provided verification HTML file at the site root for domain ownership verification).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-18",
+      "summary": "Frontend: add location search autocomplete/typeahead that recommends building names and locations while the user types in the location bar",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-19",
+      "summary": "Add a new public backend query that returns autocomplete suggestions for the public search Location input, based on existing stored properties. Suggestions must include both (a) property.location values and (b) property.title values (to cover building names), deduplicated, case-insensitive matched by the user’s typed text, and returned as a short list suitable for typeahead.",
+      "reqIds": [
+        "REQ-22"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-20",
+      "summary": "Frontend: add Furnishing Status filter with options Furnished / Semi-Furnished / Unfurnished in public listings search",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-21",
+      "summary": "Listings data + UI: add Washroom count field; allow agents to enter it and display it on listing cards and listing details",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-22",
+      "summary": "WhatsApp CTA: include the listing title in the prefilled WhatsApp message when a user contacts the agent",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-23",
+      "summary": "Listings data + UI: add Permit Number field; allow agents to enter it and display it on the public frontend listing (card/details as appropriate)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-24",
+      "summary": "Extend the backend Property model and create/update params to store (a) permit number, (b) furnishing status with all options (Furnished, Semi-Furnished, Unfurnished), and (c) number of washrooms; ensure these fields are returned by all public property query methods and by getPropertyById.",
+      "reqIds": [
+        "REQ-25"
       ],
       "status": "pending"
     }

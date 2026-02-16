@@ -5,7 +5,7 @@ import { ArrowLeft, Loader2 } from 'lucide-react';
 import PropertyForm from '../../components/agent/PropertyForm';
 import { toast } from 'sonner';
 import AgentProtectedRoute from '../../components/auth/AgentProtectedRoute';
-import type { PropertyType } from '../../backend';
+import type { PropertyType, FurnishingStatus } from '../../backend';
 import { ExternalBlob } from '../../backend';
 
 function PropertyEditorContent() {
@@ -22,10 +22,13 @@ function PropertyEditorContent() {
     title: string;
     location: string;
     propertyType: PropertyType;
+    furnishingStatus: FurnishingStatus;
     areaSquareFeet: string;
     price: string;
     description: string;
     images: ExternalBlob[];
+    numberOfWashrooms: string;
+    permitNumber: string;
   }) => {
     try {
       if (isEditMode && property) {
@@ -34,10 +37,13 @@ function PropertyEditorContent() {
           title: data.title,
           location: data.location,
           propertyType: data.propertyType,
+          furnishingStatus: data.furnishingStatus,
           areaSquareFeet: BigInt(data.areaSquareFeet),
           price: BigInt(data.price),
           description: data.description,
           images: data.images,
+          numberOfWashrooms: BigInt(data.numberOfWashrooms),
+          permitNumber: data.permitNumber,
         });
         toast.success('Property updated successfully');
       } else {
@@ -45,10 +51,13 @@ function PropertyEditorContent() {
           title: data.title,
           location: data.location,
           propertyType: data.propertyType,
+          furnishingStatus: data.furnishingStatus,
           areaSquareFeet: BigInt(data.areaSquareFeet),
           price: BigInt(data.price),
           description: data.description,
           images: data.images,
+          numberOfWashrooms: BigInt(data.numberOfWashrooms),
+          permitNumber: data.permitNumber,
         });
         toast.success('Property created successfully');
       }
@@ -112,10 +121,13 @@ function PropertyEditorContent() {
             title: property.title,
             location: property.location,
             propertyType: property.propertyType,
+            furnishingStatus: property.furnishingStatus,
             areaSquareFeet: property.areaSquareFeet.toString(),
             price: property.price.toString(),
             description: property.description,
             images: property.images,
+            numberOfWashrooms: property.numberOfWashrooms.toString(),
+            permitNumber: property.permitNumber,
           } : undefined}
           onSubmit={handleSubmit}
           isSubmitting={createProperty.isPending || updateProperty.isPending}

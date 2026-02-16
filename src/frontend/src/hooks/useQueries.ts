@@ -1,8 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useActor } from './useActor';
-import type { Property, PropertyType, UserProfile, UserRole, CreatePropertyParams } from '../backend';
+import type { Property, PropertyType, FurnishingStatus, UserProfile, UserRole, CreatePropertyParams } from '../backend';
 import { ExternalBlob } from '../backend';
 import { agentCodeAuth } from '../utils/agentCodeAuth';
+import { useDebouncedValue } from './useDebouncedValue';
 
 export function useGetCallerUserProfile() {
   const { actor, isFetching: actorFetching } = useActor();
@@ -53,9 +54,43 @@ export function useGetCallerUserRole() {
   });
 }
 
+export function useAutocompleteSuggestions(input: string) {
+  const { actor, isFetching: actorFetching } = useActor();
+  const debouncedInput = useDebouncedValue(input, 300);
+
+  return useQuery<string[]>({
+    queryKey: ['autocomplete', debouncedInput],
+    queryFn: async () => {
+      if (!actor) return [];
+      try {
+        return await actor.getAutocompleteSuggestions(debouncedInput, BigInt(10));
+      } catch (error) {
+        console.error('Autocomplete error:', error);
+        return [];
+      }
+    },
+    enabled: !!actor && !actorFetching && debouncedInput.trim().length > 0,
+    retry: false,
+  });
+}
+
+export function useGetAllProperties() {
+  const { actor, isFetching: actorFetching } = useActor();
+
+  return useQuery<Property[]>({
+    queryKey: ['properties', 'all'],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.getAllProperties();
+    },
+    enabled: !!actor && !actorFetching,
+  });
+}
+
 export function useSearchProperties(filters: {
   location?: string;
   propertyType?: PropertyType;
+  furnishingStatus?: FurnishingStatus;
   minPrice?: bigint;
   maxPrice?: bigint;
   minArea?: bigint;
@@ -67,6 +102,7 @@ export function useSearchProperties(filters: {
   const queryKey = ['properties', 'search', {
     location: filters.location,
     propertyType: filters.propertyType,
+    furnishingStatus: filters.furnishingStatus,
     minPrice: filters.minPrice?.toString(),
     maxPrice: filters.maxPrice?.toString(),
     minArea: filters.minArea?.toString(),
@@ -78,40 +114,42 @@ export function useSearchProperties(filters: {
     queryFn: async () => {
       if (!actor) return [];
       
-      const { location, propertyType, minPrice, maxPrice, minArea, maxArea } = filters;
+      const { location, propertyType, furnishingStatus, minPrice, maxPrice, minArea, maxArea } = filters;
       
       // If all filters are provided
-      if (location && propertyType && minPrice !== undefined && maxPrice !== undefined && minArea !== undefined && maxArea !== undefined) {
-        return actor.getPropertiesByAllFilters(location, propertyType, minPrice, maxPrice, minArea, maxArea);
+      if (location && propertyType && furnishingStatus && minPrice !== undefined && maxPrice !== undefined && minArea !== undefined && maxArea !== undefined) {
+        return actor.getPropertiesWithFullFilters(location, propertyType, furnishingStatus, minPrice, maxPrice, minArea, maxArea);
       }
       
-      // If location and type
-      if (location && propertyType) {
-        return actor.getPropertiesByLocationAndType(location, propertyType);
-      }
+      // Get all properties and apply filters client-side
+      let properties = await actor.getAllProperties();
       
-      // If only location
+      // Apply location filter
       if (location) {
-        return actor.getPropertiesByLocation(location);
+        properties = properties.filter(p => p.location === location);
       }
       
-      // If only type
+      // Apply property type filter
       if (propertyType) {
-        return actor.getPropertiesByType(propertyType);
+        properties = properties.filter(p => p.propertyType === propertyType);
       }
       
-      // If only price range
+      // Apply furnishing status filter
+      if (furnishingStatus) {
+        properties = properties.filter(p => p.furnishingStatus === furnishingStatus);
+      }
+      
+      // Apply price range filter
       if (minPrice !== undefined && maxPrice !== undefined) {
-        return actor.getPropertiesByPriceRange(minPrice, maxPrice);
+        properties = properties.filter(p => p.price >= minPrice && p.price <= maxPrice);
       }
       
-      // If only area range
+      // Apply area range filter
       if (minArea !== undefined && maxArea !== undefined) {
-        return actor.getPropertiesByAreaRange(minArea, maxArea);
+        properties = properties.filter(p => p.areaSquareFeet >= minArea && p.areaSquareFeet <= maxArea);
       }
       
-      // Default: get all
-      return actor.getAllProperties();
+      return properties;
     },
     enabled: !!actor && !actorFetching,
   });
@@ -144,10 +182,13 @@ export function useCreateProperty() {
       title: string;
       location: string;
       propertyType: PropertyType;
+      furnishingStatus: FurnishingStatus;
       areaSquareFeet: bigint;
       price: bigint;
       description: string;
       images: ExternalBlob[];
+      numberOfWashrooms: bigint;
+      permitNumber: string;
     }) => {
       if (!actor) throw new Error('Actor not available');
       
@@ -160,13 +201,16 @@ export function useCreateProperty() {
         title: data.title,
         location: data.location,
         propertyType: data.propertyType,
+        furnishingStatus: data.furnishingStatus,
         areaSquareFeet: data.areaSquareFeet,
         price: data.price,
         description: data.description,
         images: data.images,
+        numberOfWashrooms: data.numberOfWashrooms,
+        permitNumber: data.permitNumber,
       };
       
-      return actor.createProperty(params, agentCodeAuth.getAgentCode());
+      return actor.createProperty(params);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['properties'] });
@@ -184,10 +228,13 @@ export function useUpdateProperty() {
       title: string;
       location: string;
       propertyType: PropertyType;
+      furnishingStatus: FurnishingStatus;
       areaSquareFeet: bigint;
       price: bigint;
       description: string;
       images: ExternalBlob[];
+      numberOfWashrooms: bigint;
+      permitNumber: string;
     }) => {
       if (!actor) throw new Error('Actor not available');
       
@@ -200,13 +247,16 @@ export function useUpdateProperty() {
         title: data.title,
         location: data.location,
         propertyType: data.propertyType,
+        furnishingStatus: data.furnishingStatus,
         areaSquareFeet: data.areaSquareFeet,
         price: data.price,
         description: data.description,
         images: data.images,
+        numberOfWashrooms: data.numberOfWashrooms,
+        permitNumber: data.permitNumber,
       };
       
-      return actor.updateProperty(data.propertyId, params, agentCodeAuth.getAgentCode());
+      return actor.updateProperty(data.propertyId, params);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['properties'] });
@@ -228,23 +278,10 @@ export function useDeleteProperty() {
         throw new Error('Authorization required. Please return to /agent and enter your agent code.');
       }
       
-      return actor.deleteProperty(propertyId, agentCodeAuth.getAgentCode());
+      return actor.deleteProperty(propertyId);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['properties'] });
     },
-  });
-}
-
-export function useGetAllProperties() {
-  const { actor, isFetching: actorFetching } = useActor();
-
-  return useQuery<Property[]>({
-    queryKey: ['properties', 'all'],
-    queryFn: async () => {
-      if (!actor) return [];
-      return actor.getAllProperties();
-    },
-    enabled: !!actor && !actorFetching,
   });
 }

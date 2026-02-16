@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Maximize2, DollarSign } from 'lucide-react';
+import { MapPin, Maximize2, DollarSign, Bath } from 'lucide-react';
 import type { Property } from '../../backend';
 
 interface PropertyCardProps {
@@ -41,11 +41,25 @@ export default function PropertyCard({ property }: PropertyCardProps) {
             <MapPin className="h-4 w-4 shrink-0" />
             <span className="line-clamp-1">{property.location}</span>
           </div>
+
+          {property.permitNumber && (
+            <div className="text-xs text-muted-foreground">
+              Permit: {property.permitNumber}
+            </div>
+          )}
         </CardContent>
-        <CardFooter className="p-4 pt-0 flex items-center justify-between text-sm">
-          <div className="flex items-center gap-1 text-muted-foreground">
-            <Maximize2 className="h-4 w-4" />
-            <span>{property.areaSquareFeet.toString()} sqft</span>
+        <CardFooter className="p-4 pt-0 flex items-center justify-between text-sm flex-wrap gap-2">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1 text-muted-foreground">
+              <Maximize2 className="h-4 w-4" />
+              <span>{property.areaSquareFeet.toString()} sqft</span>
+            </div>
+            {property.numberOfWashrooms > 0 && (
+              <div className="flex items-center gap-1 text-muted-foreground">
+                <Bath className="h-4 w-4" />
+                <span>{property.numberOfWashrooms.toString()}</span>
+              </div>
+            )}
           </div>
           <div className="flex items-center gap-1 font-semibold text-primary">
             <DollarSign className="h-4 w-4" />

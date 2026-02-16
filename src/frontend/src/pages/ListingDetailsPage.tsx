@@ -1,11 +1,12 @@
 import { useParams } from '@tanstack/react-router';
 import { useGetPropertyById } from '../hooks/useQueries';
-import { Loader2, MapPin, Maximize2, DollarSign, ArrowLeft } from 'lucide-react';
+import { Loader2, MapPin, Maximize2, DollarSign, ArrowLeft, Bath, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Link } from '@tanstack/react-router';
 import PropertyImageGallery from '../components/listings/PropertyImageGallery';
 import ContactAgentButton from '../components/listings/ContactAgentButton';
+import { FurnishingStatus } from '../backend';
 
 export default function ListingDetailsPage() {
   const { id } = useParams({ from: '/listing/$id' });
@@ -40,6 +41,19 @@ export default function ListingDetailsPage() {
   const propertyTypeIcon = property.propertyType === 'office' 
     ? '/assets/generated/icon-office.dim_256x256.png'
     : '/assets/generated/icon-retail.dim_256x256.png';
+
+  const getFurnishingLabel = (status: FurnishingStatus): string => {
+    switch (status) {
+      case FurnishingStatus.furnished:
+        return 'Furnished';
+      case FurnishingStatus.semiFurnished:
+        return 'Semi-Furnished';
+      case FurnishingStatus.unfurnished:
+        return 'Unfurnished';
+      default:
+        return 'N/A';
+    }
+  };
 
   return (
     <div className="min-h-screen bg-muted/20">
@@ -93,6 +107,31 @@ export default function ListingDetailsPage() {
                     <p className="text-xl font-semibold">{property.price.toString()} AED</p>
                   </div>
                 </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 py-4 border-b">
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1">Furnishing Status</p>
+                  <p className="font-medium">{getFurnishingLabel(property.furnishingStatus)}</p>
+                </div>
+                {property.numberOfWashrooms > 0 && (
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">Washrooms</p>
+                    <div className="flex items-center gap-2">
+                      <Bath className="h-5 w-5 text-primary" />
+                      <p className="font-medium">{property.numberOfWashrooms.toString()}</p>
+                    </div>
+                  </div>
+                )}
+                {property.permitNumber && (
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">Permit Number</p>
+                    <div className="flex items-center gap-2">
+                      <FileText className="h-5 w-5 text-primary" />
+                      <p className="font-medium">{property.permitNumber}</p>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div>

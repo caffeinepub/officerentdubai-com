@@ -24,6 +24,11 @@ export const UserRole = IDL.Variant({
   'user' : IDL.Null,
   'guest' : IDL.Null,
 });
+export const FurnishingStatus = IDL.Variant({
+  'semiFurnished' : IDL.Null,
+  'furnished' : IDL.Null,
+  'unfurnished' : IDL.Null,
+});
 export const PropertyType = IDL.Variant({
   'retail' : IDL.Null,
   'office' : IDL.Null,
@@ -31,21 +36,27 @@ export const PropertyType = IDL.Variant({
 export const ExternalBlob = IDL.Vec(IDL.Nat8);
 export const CreatePropertyParams = IDL.Record({
   'title' : IDL.Text,
+  'furnishingStatus' : FurnishingStatus,
   'propertyType' : PropertyType,
+  'permitNumber' : IDL.Text,
   'description' : IDL.Text,
   'price' : IDL.Nat,
   'areaSquareFeet' : IDL.Nat,
   'location' : IDL.Text,
+  'numberOfWashrooms' : IDL.Nat,
   'images' : IDL.Vec(ExternalBlob),
 });
 export const Property = IDL.Record({
   'id' : IDL.Nat,
   'title' : IDL.Text,
+  'furnishingStatus' : FurnishingStatus,
   'propertyType' : PropertyType,
+  'permitNumber' : IDL.Text,
   'description' : IDL.Text,
   'price' : IDL.Nat,
   'areaSquareFeet' : IDL.Nat,
   'location' : IDL.Text,
+  'numberOfWashrooms' : IDL.Nat,
   'images' : IDL.Vec(ExternalBlob),
 });
 export const UserProfile = IDL.Record({ 'name' : IDL.Text });
@@ -79,28 +90,28 @@ export const idlService = IDL.Service({
   '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
-  'createProperty' : IDL.Func([CreatePropertyParams, IDL.Text], [], []),
-  'deleteProperty' : IDL.Func([IDL.Nat, IDL.Text], [], []),
+  'createProperty' : IDL.Func([CreatePropertyParams], [], []),
+  'deleteProperty' : IDL.Func([IDL.Nat], [], []),
   'getAllProperties' : IDL.Func([], [IDL.Vec(Property)], ['query']),
-  'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
-  'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
-  'getPropertiesByAllFilters' : IDL.Func(
-      [IDL.Text, PropertyType, IDL.Nat, IDL.Nat, IDL.Nat, IDL.Nat],
-      [IDL.Vec(Property)],
+  'getAutocompleteSuggestions' : IDL.Func(
+      [IDL.Text, IDL.Opt(IDL.Nat)],
+      [IDL.Vec(IDL.Text)],
       ['query'],
     ),
+  'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
+  'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
   'getPropertiesByAreaRange' : IDL.Func(
       [IDL.Nat, IDL.Nat],
       [IDL.Vec(Property)],
       ['query'],
     ),
-  'getPropertiesByLocation' : IDL.Func(
-      [IDL.Text],
+  'getPropertiesByFurnishingStatus' : IDL.Func(
+      [FurnishingStatus],
       [IDL.Vec(Property)],
       ['query'],
     ),
-  'getPropertiesByLocationAndType' : IDL.Func(
-      [IDL.Text, PropertyType],
+  'getPropertiesByLocation' : IDL.Func(
+      [IDL.Text],
       [IDL.Vec(Property)],
       ['query'],
     ),
@@ -114,6 +125,19 @@ export const idlService = IDL.Service({
       [IDL.Vec(Property)],
       ['query'],
     ),
+  'getPropertiesWithFullFilters' : IDL.Func(
+      [
+        IDL.Text,
+        PropertyType,
+        FurnishingStatus,
+        IDL.Nat,
+        IDL.Nat,
+        IDL.Nat,
+        IDL.Nat,
+      ],
+      [IDL.Vec(Property)],
+      ['query'],
+    ),
   'getPropertyById' : IDL.Func([IDL.Nat], [Property], ['query']),
   'getUserProfile' : IDL.Func(
       [IDL.Principal],
@@ -122,11 +146,7 @@ export const idlService = IDL.Service({
     ),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
-  'updateProperty' : IDL.Func(
-      [IDL.Nat, CreatePropertyParams, IDL.Text],
-      [],
-      [],
-    ),
+  'updateProperty' : IDL.Func([IDL.Nat, CreatePropertyParams], [], []),
 });
 
 export const idlInitArgs = [];
@@ -148,6 +168,11 @@ export const idlFactory = ({ IDL }) => {
     'user' : IDL.Null,
     'guest' : IDL.Null,
   });
+  const FurnishingStatus = IDL.Variant({
+    'semiFurnished' : IDL.Null,
+    'furnished' : IDL.Null,
+    'unfurnished' : IDL.Null,
+  });
   const PropertyType = IDL.Variant({
     'retail' : IDL.Null,
     'office' : IDL.Null,
@@ -155,21 +180,27 @@ export const idlFactory = ({ IDL }) => {
   const ExternalBlob = IDL.Vec(IDL.Nat8);
   const CreatePropertyParams = IDL.Record({
     'title' : IDL.Text,
+    'furnishingStatus' : FurnishingStatus,
     'propertyType' : PropertyType,
+    'permitNumber' : IDL.Text,
     'description' : IDL.Text,
     'price' : IDL.Nat,
     'areaSquareFeet' : IDL.Nat,
     'location' : IDL.Text,
+    'numberOfWashrooms' : IDL.Nat,
     'images' : IDL.Vec(ExternalBlob),
   });
   const Property = IDL.Record({
     'id' : IDL.Nat,
     'title' : IDL.Text,
+    'furnishingStatus' : FurnishingStatus,
     'propertyType' : PropertyType,
+    'permitNumber' : IDL.Text,
     'description' : IDL.Text,
     'price' : IDL.Nat,
     'areaSquareFeet' : IDL.Nat,
     'location' : IDL.Text,
+    'numberOfWashrooms' : IDL.Nat,
     'images' : IDL.Vec(ExternalBlob),
   });
   const UserProfile = IDL.Record({ 'name' : IDL.Text });
@@ -203,28 +234,28 @@ export const idlFactory = ({ IDL }) => {
     '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
-    'createProperty' : IDL.Func([CreatePropertyParams, IDL.Text], [], []),
-    'deleteProperty' : IDL.Func([IDL.Nat, IDL.Text], [], []),
+    'createProperty' : IDL.Func([CreatePropertyParams], [], []),
+    'deleteProperty' : IDL.Func([IDL.Nat], [], []),
     'getAllProperties' : IDL.Func([], [IDL.Vec(Property)], ['query']),
-    'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
-    'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
-    'getPropertiesByAllFilters' : IDL.Func(
-        [IDL.Text, PropertyType, IDL.Nat, IDL.Nat, IDL.Nat, IDL.Nat],
-        [IDL.Vec(Property)],
+    'getAutocompleteSuggestions' : IDL.Func(
+        [IDL.Text, IDL.Opt(IDL.Nat)],
+        [IDL.Vec(IDL.Text)],
         ['query'],
       ),
+    'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
+    'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
     'getPropertiesByAreaRange' : IDL.Func(
         [IDL.Nat, IDL.Nat],
         [IDL.Vec(Property)],
         ['query'],
       ),
-    'getPropertiesByLocation' : IDL.Func(
-        [IDL.Text],
+    'getPropertiesByFurnishingStatus' : IDL.Func(
+        [FurnishingStatus],
         [IDL.Vec(Property)],
         ['query'],
       ),
-    'getPropertiesByLocationAndType' : IDL.Func(
-        [IDL.Text, PropertyType],
+    'getPropertiesByLocation' : IDL.Func(
+        [IDL.Text],
         [IDL.Vec(Property)],
         ['query'],
       ),
@@ -238,6 +269,19 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(Property)],
         ['query'],
       ),
+    'getPropertiesWithFullFilters' : IDL.Func(
+        [
+          IDL.Text,
+          PropertyType,
+          FurnishingStatus,
+          IDL.Nat,
+          IDL.Nat,
+          IDL.Nat,
+          IDL.Nat,
+        ],
+        [IDL.Vec(Property)],
+        ['query'],
+      ),
     'getPropertyById' : IDL.Func([IDL.Nat], [Property], ['query']),
     'getUserProfile' : IDL.Func(
         [IDL.Principal],
@@ -246,11 +290,7 @@ export const idlFactory = ({ IDL }) => {
       ),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
-    'updateProperty' : IDL.Func(
-        [IDL.Nat, CreatePropertyParams, IDL.Text],
-        [],
-        [],
-      ),
+    'updateProperty' : IDL.Func([IDL.Nat, CreatePropertyParams], [], []),
   });
 };
 

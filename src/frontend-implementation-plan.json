@@ -1,90 +1,90 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Agent Code gate for Agent Arena access and listing mutations",
+  "title": "Add permit number, furnishing status, and washrooms to Agent Arena + public listings and search",
   "requirements": [
     {
-      "id": "REQ-12",
-      "summary": "Replace /agent Internet Identity entry with an Agent Code gate that persists local authorization and redirects to /agent/dashboard on success.",
+      "id": "REQ-26",
+      "summary": "Extend Agent Arena create/edit property form to capture Permit Number, Furnishing Status, and Washrooms and submit them in create/update requests.",
       "acceptanceCriteria": [
-        "Visiting /agent no longer shows an Internet Identity login button; it shows an Agent Code input and submit action.",
-        "Entering code 050702 grants access and redirects the user to /agent/dashboard.",
-        "Entering an incorrect code shows a clear error message (English) and does not grant access.",
-        "Refreshing the page after successful entry keeps the user authorized without re-entering the code (until they explicitly log out)."
+        "On /agent/properties/new and /agent/properties/edit/:id, the form includes fields labeled in English: \"Permit Number\", \"Furnishing Status\", and \"Washrooms\".",
+        "Furnishing Status offers exactly 3 options: Furnished, Semi-Furnished, Unfurnished.",
+        "Creating a property saves these values; editing a property pre-fills the fields from existing listing data and saving updates them.",
+        "If required validation is applied, validation messages (if any) are in English."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/utils/agentCodeAuth.ts",
-          "operation": "create",
-          "description": "Create a small Agent Code auth utility that persists an 'authorized' state in localStorage, exposes helpers to check/set/clear authorization, and (optionally) returns the stored code for use in listing mutations."
-        },
-        {
-          "path": "frontend/src/pages/agent/AgentArenaEntryPage.tsx",
+          "path": "frontend/src/components/agent/PropertyForm.tsx",
           "operation": "modify",
-          "description": "Replace the Internet Identity login/signup UI with an English-only Agent Code form (single input + submit). On correct code (050702), persist authorization via the agentCodeAuth utility and navigate to /agent/dashboard; on incorrect code, show an inline English error message. If already authorized on load, immediately navigate to /agent/dashboard."
-        }
-      ]
-    },
-    {
-      "id": "REQ-13",
-      "summary": "Protect all /agent/* pages using the locally-stored Agent Code authorization state and show an Access Denied screen when unauthorized.",
-      "acceptanceCriteria": [
-        "If the agent code has not been accepted, navigating directly to any /agent/* page shows Access Denied and a link to /agent.",
-        "If the agent code has been accepted, /agent/* pages render normally.",
-        "No calls to user-role-based gating are required to allow access once the agent code is accepted."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/auth/AgentProtectedRoute.tsx",
-          "operation": "modify",
-          "description": "Refactor AgentProtectedRoute to authorize purely via the agentCodeAuth local authorization state (remove Internet Identity + user-role checks). When unauthorized, render an 'Access Denied' screen with a button/link back to /agent."
-        },
-        {
-          "path": "frontend/src/App.tsx",
-          "operation": "modify",
-          "description": "Verify all Agent Arena routes (/agent/dashboard, /agent/properties, /agent/properties/new, /agent/properties/edit/$id) remain wrapped/protected by AgentProtectedRoute usage in their page components (no new routes required)."
-        }
-      ]
-    },
-    {
-      "id": "REQ-14",
-      "summary": "Update Agent Dashboard logout to clear the Agent Code session (and related cached data) and return to /agent.",
-      "acceptanceCriteria": [
-        "Clicking Logout clears the saved agent-code authorization state.",
-        "After Logout, navigating to /agent/dashboard (or any /agent/* route) is blocked until the correct agent code is entered again.",
-        "Logout flow does not require Internet Identity."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/agent/AgentDashboardPage.tsx",
-          "operation": "modify",
-          "description": "Change Logout to clear Agent Code authorization via agentCodeAuth, clear any related cached client state (e.g., React Query cache), and navigate back to /agent without invoking Internet Identity logout."
-        }
-      ]
-    },
-    {
-      "id": "REQ-16",
-      "summary": "Ensure create/update/delete property mutations always provide the agent code to the backend and show clear English errors when unauthorized.",
-      "acceptanceCriteria": [
-        "Creating a property from the Agent Arena succeeds only when the agent code gate has been passed.",
-        "Editing and deleting a property from the Agent Arena succeeds only when the agent code gate has been passed.",
-        "If the agent code is cleared/absent and a mutation is attempted, the UI shows an English error indicating access is not authorized and guides the user back to /agent to enter the agent code again."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/hooks/useQueries.ts",
-          "operation": "modify",
-          "description": "Update create/update/delete property mutations to always pass the locally-stored agent code to backend calls (per backend interface). If the agent code is missing, fail fast with a clear English error. If the backend rejects due to invalid/missing code, surface a clear English error suitable for UI display that guides the user to return to /agent to re-enter the code."
-        },
-        {
-          "path": "frontend/src/pages/agent/ManagePropertiesPage.tsx",
-          "operation": "modify",
-          "description": "Improve delete error handling to display a clear English authorization error when a mutation fails due to missing/invalid agent code, including guidance to go back to /agent to enter the agent code again."
+          "description": "Add controlled form inputs for Permit Number (text), Furnishing Status (select with exactly: Furnished, Semi-Furnished, Unfurnished), and Washrooms (number). Extend PropertyForm props/initialData/onSubmit payload to include these fields, add basic numeric validation for washrooms (>= 0 or >= 1 as appropriate), and ensure all labels/messages are in English."
         },
         {
           "path": "frontend/src/pages/agent/PropertyEditorPage.tsx",
           "operation": "modify",
-          "description": "Improve create/update error handling to display a clear English authorization error when a mutation fails due to missing/invalid agent code, including guidance to go back to /agent to enter the agent code again."
+          "description": "Wire the new PropertyForm fields into create/edit flows: map property.permitNumber, property.furnishingStatus, and property.numberOfWashrooms into initialData for edit mode; include the three fields in the handleSubmit payload; and pass them through to the create/update mutations so they are sent to the backend."
+        },
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Extend useCreateProperty and useUpdateProperty mutation inputs to accept permitNumber, furnishingStatus, and numberOfWashrooms; include these fields when building CreatePropertyParams for create/update calls so Agent Arena submissions persist the values."
+        },
+        {
+          "path": "frontend/src/backend.d.ts",
+          "operation": "modify",
+          "description": "Confirm frontend type definitions include permitNumber, furnishingStatus, and numberOfWashrooms on Property and CreatePropertyParams, and update the declarations if needed so the Agent Arena form and mutations type-check correctly."
+        }
+      ]
+    },
+    {
+      "id": "REQ-27",
+      "summary": "Show Permit Number, Furnishing Status, and Washrooms on listing cards and the listing details page with clear English labels and graceful handling of missing values.",
+      "acceptanceCriteria": [
+        "Property cards show the washrooms count and/or permit number in a readable way without breaking the existing layout.",
+        "Listing details page shows Permit Number, Furnishing Status, and Washrooms with English labels.",
+        "If a listing is missing one of these values (e.g., older data), the UI handles it gracefully (e.g., hides the row or shows \"N/A\" in English) without crashing."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/listings/PropertyCard.tsx",
+          "operation": "modify",
+          "description": "Update the property card UI to display washrooms count and/or permit number (e.g., as a compact metadata row). Ensure the layout remains intact and handle missing/empty values gracefully (hide the field or show \"N/A\" in English)."
+        },
+        {
+          "path": "frontend/src/pages/ListingDetailsPage.tsx",
+          "operation": "modify",
+          "description": "Add a clearly labeled details section for \"Permit Number\", \"Furnishing Status\", and \"Washrooms\". Map FurnishingStatus enum values to English labels (Furnished / Semi-Furnished / Unfurnished) and handle missing values by hiding the row or showing \"N/A\" in English without throwing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-28",
+      "summary": "Add a public Furnishing Status filter to PropertySearchBar and ensure search results respect it when applied.",
+      "acceptanceCriteria": [
+        "Public search UI includes a \"Furnishing Status\" filter with options: Furnished, Semi-Furnished, Unfurnished (and an empty/unset state).",
+        "When Furnishing Status is selected and the user clicks \"Search Properties\", the results list updates to include only listings matching that furnishing status (in addition to any other active filters).",
+        "When Furnishing Status is not selected, results behavior remains unchanged from before this update.",
+        "All user-facing text for this filter is in English."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/search/PropertySearchBar.tsx",
+          "operation": "modify",
+          "description": "Add a new Select control labeled \"Furnishing Status\" with an empty/unset state plus exactly three options: Furnished, Semi-Furnished, Unfurnished. Extend the onSearch callback payload to include an optional furnishingStatus filter and ensure all text is English."
+        },
+        {
+          "path": "frontend/src/pages/PublicListingsPage.tsx",
+          "operation": "modify",
+          "description": "Extend the stored searchFilters state to include optional furnishingStatus, pass it from PropertySearchBar into the page state, and ensure triggering \"Search Properties\" updates results based on the furnishing status selection."
+        },
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Update useSearchProperties to accept an optional furnishingStatus filter and apply it when fetching results. Prefer backend capabilities that support furnishing filtering (e.g., fetch by furnishing status directly when it is the only filter; when combined with other filters, use the strongest available backend capability and apply any remaining furnishing filtering on the frontend if needed) so results respect the filter while preserving prior behavior when unset."
+        },
+        {
+          "path": "frontend/src/backend.d.ts",
+          "operation": "modify",
+          "description": "Ensure FurnishingStatus enum and the relevant property query function type declarations are present/accurate for the new furnishing filter usage in PropertySearchBar/PublicListingsPage/useSearchProperties."
         }
       ]
     }

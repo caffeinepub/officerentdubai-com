@@ -17,24 +17,35 @@ export class ExternalBlob {
 export interface Property {
     id: bigint;
     title: string;
+    furnishingStatus: FurnishingStatus;
     propertyType: PropertyType;
+    permitNumber: string;
     description: string;
     price: bigint;
     areaSquareFeet: bigint;
     location: string;
+    numberOfWashrooms: bigint;
     images: Array<ExternalBlob>;
 }
 export interface CreatePropertyParams {
     title: string;
+    furnishingStatus: FurnishingStatus;
     propertyType: PropertyType;
+    permitNumber: string;
     description: string;
     price: bigint;
     areaSquareFeet: bigint;
     location: string;
+    numberOfWashrooms: bigint;
     images: Array<ExternalBlob>;
 }
 export interface UserProfile {
     name: string;
+}
+export enum FurnishingStatus {
+    semiFurnished = "semiFurnished",
+    furnished = "furnished",
+    unfurnished = "unfurnished"
 }
 export enum PropertyType {
     retail = "retail",
@@ -47,20 +58,21 @@ export enum UserRole {
 }
 export interface backendInterface {
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
-    createProperty(params: CreatePropertyParams, providedAgentCode: string): Promise<void>;
-    deleteProperty(propertyId: bigint, providedAgentCode: string): Promise<void>;
+    createProperty(params: CreatePropertyParams): Promise<void>;
+    deleteProperty(propertyId: bigint): Promise<void>;
     getAllProperties(): Promise<Array<Property>>;
+    getAutocompleteSuggestions(input: string, maxResults: bigint | null): Promise<Array<string>>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
-    getPropertiesByAllFilters(location: string, propType: PropertyType, minPrice: bigint, maxPrice: bigint, minArea: bigint, maxArea: bigint): Promise<Array<Property>>;
     getPropertiesByAreaRange(minArea: bigint, maxArea: bigint): Promise<Array<Property>>;
+    getPropertiesByFurnishingStatus(status: FurnishingStatus): Promise<Array<Property>>;
     getPropertiesByLocation(location: string): Promise<Array<Property>>;
-    getPropertiesByLocationAndType(location: string, propType: PropertyType): Promise<Array<Property>>;
     getPropertiesByPriceRange(minPrice: bigint, maxPrice: bigint): Promise<Array<Property>>;
     getPropertiesByType(propType: PropertyType): Promise<Array<Property>>;
+    getPropertiesWithFullFilters(location: string, propType: PropertyType, furnishingStatus: FurnishingStatus, minPrice: bigint, maxPrice: bigint, minArea: bigint, maxArea: bigint): Promise<Array<Property>>;
     getPropertyById(propertyId: bigint): Promise<Property>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     isCallerAdmin(): Promise<boolean>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
-    updateProperty(propertyId: bigint, params: CreatePropertyParams, providedAgentCode: string): Promise<void>;
+    updateProperty(propertyId: bigint, params: CreatePropertyParams): Promise<void>;
 }

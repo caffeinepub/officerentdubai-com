@@ -7,26 +7,32 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
 import MultiPhotoUpload from './MultiPhotoUpload';
-import { PropertyType, ExternalBlob } from '../../backend';
+import { PropertyType, FurnishingStatus, ExternalBlob } from '../../backend';
 
 interface PropertyFormProps {
   initialData?: {
     title: string;
     location: string;
     propertyType: PropertyType;
+    furnishingStatus: FurnishingStatus;
     areaSquareFeet: string;
     price: string;
     description: string;
     images: ExternalBlob[];
+    numberOfWashrooms: string;
+    permitNumber: string;
   };
   onSubmit: (data: {
     title: string;
     location: string;
     propertyType: PropertyType;
+    furnishingStatus: FurnishingStatus;
     areaSquareFeet: string;
     price: string;
     description: string;
     images: ExternalBlob[];
+    numberOfWashrooms: string;
+    permitNumber: string;
   }) => Promise<void>;
   isSubmitting: boolean;
   submitLabel: string;
@@ -36,10 +42,15 @@ export default function PropertyForm({ initialData, onSubmit, isSubmitting, subm
   const [title, setTitle] = useState(initialData?.title || '');
   const [location, setLocation] = useState(initialData?.location || '');
   const [propertyType, setPropertyType] = useState<PropertyType>(initialData?.propertyType || PropertyType.office);
+  const [furnishingStatus, setFurnishingStatus] = useState<FurnishingStatus>(
+    initialData?.furnishingStatus || FurnishingStatus.unfurnished
+  );
   const [areaSquareFeet, setAreaSquareFeet] = useState(initialData?.areaSquareFeet || '');
   const [price, setPrice] = useState(initialData?.price || '');
   const [description, setDescription] = useState(initialData?.description || '');
   const [images, setImages] = useState<ExternalBlob[]>(initialData?.images || []);
+  const [numberOfWashrooms, setNumberOfWashrooms] = useState(initialData?.numberOfWashrooms || '');
+  const [permitNumber, setPermitNumber] = useState(initialData?.permitNumber || '');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,10 +63,13 @@ export default function PropertyForm({ initialData, onSubmit, isSubmitting, subm
       title: title.trim(),
       location: location.trim(),
       propertyType,
+      furnishingStatus,
       areaSquareFeet,
       price,
       description: description.trim(),
       images,
+      numberOfWashrooms,
+      permitNumber: permitNumber.trim(),
     });
   };
 
@@ -110,6 +124,20 @@ export default function PropertyForm({ initialData, onSubmit, isSubmitting, subm
             </div>
 
             <div className="space-y-2">
+              <Label htmlFor="furnishingStatus">Furnishing Status *</Label>
+              <Select value={furnishingStatus} onValueChange={(value) => setFurnishingStatus(value as FurnishingStatus)}>
+                <SelectTrigger id="furnishingStatus">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={FurnishingStatus.furnished}>Furnished</SelectItem>
+                  <SelectItem value={FurnishingStatus.semiFurnished}>Semi-Furnished</SelectItem>
+                  <SelectItem value={FurnishingStatus.unfurnished}>Unfurnished</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
               <Label htmlFor="areaSquareFeet">Area (SQFT) *</Label>
               <Input
                 id="areaSquareFeet"
@@ -132,6 +160,29 @@ export default function PropertyForm({ initialData, onSubmit, isSubmitting, subm
                 onChange={(e) => setPrice(e.target.value)}
                 required
                 min="1"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="numberOfWashrooms">Washrooms *</Label>
+              <Input
+                id="numberOfWashrooms"
+                type="number"
+                placeholder="e.g., 2"
+                value={numberOfWashrooms}
+                onChange={(e) => setNumberOfWashrooms(e.target.value)}
+                required
+                min="0"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="permitNumber">Permit Number</Label>
+              <Input
+                id="permitNumber"
+                placeholder="e.g., DLD-123456"
+                value={permitNumber}
+                onChange={(e) => setPermitNumber(e.target.value)}
               />
             </div>
           </div>
