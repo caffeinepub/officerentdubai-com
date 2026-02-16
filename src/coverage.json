@@ -1,0 +1,97 @@
+{
+  "kind": "coverage_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-16T02:39:52.055Z",
+  "sources": {
+    "buildRequest": true,
+    "implementationPlan": true
+  },
+  "requirements": {
+    "total": 5,
+    "implemented": 4,
+    "items": [
+      {
+        "id": "REQ-12",
+        "summary": "Replace the Agent Arena entry flow at route \"/agent\" to use an \"Agent Code\" gate instead of Internet Identity login/signup: show a single input for the agent code and a submit button; when the correct code \"050702\" is entered, persist the authorized state locally (e.g., localStorage) and navigate to \"/agent/dashboard\". All user-facing text must be in English.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/utils/agentCodeAuth.ts",
+          "frontend/src/pages/agent/AgentArenaEntryPage.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/utils/agentCodeAuth.ts",
+          "frontend/src/pages/agent/AgentArenaEntryPage.tsx"
+        ]
+      },
+      {
+        "id": "REQ-13",
+        "summary": "Update route protection for all Agent Arena pages (\"/agent/dashboard\", \"/agent/properties\", \"/agent/properties/new\", \"/agent/properties/edit/:id\") to authorize access based on the locally-stored Agent Code authorization state (not Internet Identity identity/role). If unauthorized, show an \"Access Denied\" screen with a button/link back to \"/agent\".",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/auth/AgentProtectedRoute.tsx",
+          "frontend/src/App.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/auth/AgentProtectedRoute.tsx"
+        ]
+      },
+      {
+        "id": "REQ-14",
+        "summary": "Change the Agent Dashboard logout behavior to log out of the Agent Code session (clear the locally-stored authorization state and any related cached agent data) and then return the user to the Agent Arena entry page.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/agent/AgentDashboardPage.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/agent/AgentDashboardPage.tsx"
+        ]
+      },
+      {
+        "id": "REQ-15",
+        "summary": "Enforce the Agent Code on the backend for all listing management operations: property creation, property update, and property deletion must require the correct agent code \"050702\"; public listing queries must remain publicly accessible without any agent code.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-16",
+        "summary": "Update the frontend data layer so that create/update/delete property mutations always send the agent code to the backend, and display a clear English error message when the backend rejects an operation due to an invalid/missing agent code.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/hooks/useQueries.ts",
+          "frontend/src/pages/agent/ManagePropertiesPage.tsx",
+          "frontend/src/pages/agent/PropertyEditorPage.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/hooks/useQueries.ts",
+          "frontend/src/pages/agent/ManagePropertiesPage.tsx",
+          "frontend/src/pages/agent/PropertyEditorPage.tsx"
+        ]
+      }
+    ]
+  },
+  "changedFiles": [
+    "backend/main.mo",
+    "build-request.json",
+    "feature_evidence.json",
+    "frontend-file-summaries.txt",
+    "frontend-implementation-plan.json",
+    "frontend/src/backend.d.ts",
+    "frontend/src/backend.ts",
+    "frontend/src/components/auth/AgentProtectedRoute.tsx",
+    "frontend/src/components/auth/AuthLoadErrorCard.tsx",
+    "frontend/src/components/auth/ProfileSetupModal.tsx",
+    "frontend/src/declarations/backend.did.d.ts",
+    "frontend/src/declarations/backend.did.js",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/pages/agent/AgentArenaEntryPage.tsx",
+    "frontend/src/pages/agent/AgentDashboardPage.tsx",
+    "frontend/src/pages/agent/ManagePropertiesPage.tsx",
+    "frontend/src/pages/agent/PropertyEditorPage.tsx",
+    "frontend/src/utils/agentCodeAuth.ts",
+    "project_state.json",
+    "scratch/component-selection.json",
+    "spec.md",
+    "spec_vs_diff_report.json"
+  ]
+}

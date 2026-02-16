@@ -1,0 +1,107 @@
+{
+  "kind": "build_request",
+  "title": "Replace Agent Arena login/signup with Agent Code gate (050702) for backend access",
+  "priority": "high",
+  "requirements": [
+    {
+      "id": "REQ-12",
+      "text": "Replace the Agent Arena entry flow at route \"/agent\" to use an \"Agent Code\" gate instead of Internet Identity login/signup: show a single input for the agent code and a submit button; when the correct code \"050702\" is entered, persist the authorized state locally (e.g., localStorage) and navigate to \"/agent/dashboard\". All user-facing text must be in English.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "recent-messages-4"
+        ],
+        "quotes": [
+          "STILL I AM NOT ABLE TO LOGIN AND SIGN UP THROUGH BACK END DO ONE THING CHANGE THE LOGIN AND SIGN UP SET UP. INSTED OF LOGIN AND SIGN UP PUT AGENT CODE TO ENTER THE AGENT CODE IS 050702 . ONLY THROUGH THIS CODE CAN ACCESS THE BANK END TO ADD AND EDIT LISTING"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Visiting /agent no longer shows an Internet Identity login button; it shows an Agent Code input and submit action.",
+        "Entering code 050702 grants access and redirects the user to /agent/dashboard.",
+        "Entering an incorrect code shows a clear error message (English) and does not grant access.",
+        "Refreshing the page after successful entry keeps the user authorized without re-entering the code (until they explicitly log out)."
+      ]
+    },
+    {
+      "id": "REQ-13",
+      "text": "Update route protection for all Agent Arena pages (\"/agent/dashboard\", \"/agent/properties\", \"/agent/properties/new\", \"/agent/properties/edit/:id\") to authorize access based on the locally-stored Agent Code authorization state (not Internet Identity identity/role). If unauthorized, show an \"Access Denied\" screen with a button/link back to \"/agent\".",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "recent-messages-4"
+        ],
+        "quotes": [
+          "ONLY THROUGH THIS CODE CAN ACCESS THE BANK END TO ADD AND EDIT LISTING"
+        ]
+      },
+      "acceptanceCriteria": [
+        "If the agent code has not been accepted, navigating directly to any /agent/* page shows Access Denied and a link to /agent.",
+        "If the agent code has been accepted, /agent/* pages render normally.",
+        "No calls to user-role-based gating are required to allow access once the agent code is accepted."
+      ]
+    },
+    {
+      "id": "REQ-14",
+      "text": "Change the Agent Dashboard logout behavior to log out of the Agent Code session (clear the locally-stored authorization state and any related cached agent data) and then return the user to the Agent Arena entry page.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "recent-messages-4"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Clicking Logout clears the saved agent-code authorization state.",
+        "After Logout, navigating to /agent/dashboard (or any /agent/* route) is blocked until the correct agent code is entered again.",
+        "Logout flow does not require Internet Identity."
+      ]
+    },
+    {
+      "id": "REQ-15",
+      "text": "Enforce the Agent Code on the backend for all listing management operations: property creation, property update, and property deletion must require the correct agent code \"050702\"; public listing queries must remain publicly accessible without any agent code.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "recent-messages-4"
+        ],
+        "quotes": [
+          "AGENT CODE IS 050702 . ONLY THROUGH THIS CODE CAN ACCESS THE BANK END TO ADD AND EDIT LISTING"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Backend rejects create/update/delete requests when the provided agent code is missing or incorrect (with a clear trap message).",
+        "Backend accepts create/update/delete requests when the provided agent code is exactly 050702.",
+        "All public query endpoints for listings (getAllProperties, filter queries, getPropertyById) still work without any agent code.",
+        "Access control is no longer dependent on Internet Identity authentication for create/update/delete."
+      ]
+    },
+    {
+      "id": "REQ-16",
+      "text": "Update the frontend data layer so that create/update/delete property mutations always send the agent code to the backend, and display a clear English error message when the backend rejects an operation due to an invalid/missing agent code.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "recent-messages-4"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Creating a property from the Agent Arena succeeds only when the agent code gate has been passed.",
+        "Editing and deleting a property from the Agent Arena succeeds only when the agent code gate has been passed.",
+        "If the agent code is cleared/absent and a mutation is attempted, the UI shows an English error indicating access is not authorized and guides the user back to /agent to enter the agent code again."
+      ]
+    }
+  ],
+  "constraints": [
+    "Backend must remain a single Motoko actor in backend/main.mo (no additional backend services).",
+    "Do not edit any files under frontend immutablePaths: frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, frontend/src/components/ui.",
+    "Public listings browsing/search must remain accessible without login/agent code."
+  ],
+  "nonGoals": [
+    "Implementing or fixing Internet Identity login/signup for agents.",
+    "Adding multiple agent codes, rotating codes, or admin management UI for codes.",
+    "Adding third-party authentication providers."
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  }
+}

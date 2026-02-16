@@ -1,0 +1,172 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 7,
+  "summary": "Build officerentdubai.com, a commercial property rental portal with a searchable/filterable listings frontend and an agent backend (\"Agent Arena\") to manage properties, including photos, with WhatsApp contact to a fixed number. Agent Arena access should be gated by an \"Agent Code\" entry (050702) instead of login/signup.",
+  "architectural_notes": [
+    "Project is a commercial property rental portal with separate public frontend and agent backend (\"Agent Arena\").",
+    "WhatsApp contact should always redirect to +971 553723617.",
+    "Agent Arena authentication should be replaced by a simple Agent Code gate (code: 050702) to access add/edit listing features."
+  ],
+  "known_issues": [
+    "Agent Arena backend: agents are currently unable to sign up and/or log in (authentication flow failing)."
+  ],
+  "isFixRequest": true,
+  "existing_features": [
+    {
+      "id": "feature-create-the-public-frontend-for-officerrentdubai-com-with-a-listings-search-section-that-includes-1-a-location-text-search-bar-2-a-commercial-type-filter-with-exactly-two-options-office-and-retail-3-an-area-sqft-filter-4-a-price-filter-and-5-a-search-action-button-that-applies-the-entered-filters-to-the-listings-results",
+      "title": "Create the public frontend for OfficerRentDubai.com with a listings search section that includes: (1) a location text search bar, (2) a commercial type filter with exactly two options: Office and Retail, (3) an Area (SQFT) filter, (4) a Price filter, and (5) a Search action/button that applies the entered filters to the listings results.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-property-listings-browsing-on-the-public-frontend-display-a-results-list-grid-of-properties-and-allow-users-to-click-a-listing-to-open-a-dedicated-listing-details-view-page-showing-full-property-details-and-photos",
+      "title": "Implement property listings browsing on the public frontend: display a results list/grid of properties and allow users to click a listing to open a dedicated listing details view/page showing full property details and photos.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-contact-the-agent-button-on-the-listing-details-view-that-opens-whatsapp-chat-to-the-fixed-number-971-553723617",
+      "title": "Add a \"Contact the agent\" button on the listing details view that opens WhatsApp chat to the fixed number +971 553723617.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-agent-arena-authentication-and-access-control-for-agent-management-features-provide-login-and-signup-capability-for-the-agent-area-and-restrict-property-creation-editing-deletion-to-authenticated-agents-only",
+      "title": "Implement Agent Arena authentication and access control for agent management features: provide login and signup capability for the agent area, and restrict property creation/editing/deletion to authenticated agents only.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-the-agent-arena-backend-capabilities-and-corresponding-frontend-ui-to-add-and-manage-properties-including-capturing-property-details-at-minimum-title-location-type-office-retail-area-sqft-price-description-and-uploading-multiple-photos-per-property",
+      "title": "Build the Agent Arena backend capabilities and corresponding frontend UI to add and manage properties, including capturing property details (at minimum: title, location, type: Office/Retail, area sqft, price, description) and uploading multiple photos per property.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-one-coherent-non-blue-non-purple-visual-theme-for-the-entire-app-public-portal-agent-arena-including-consistent-typography-color-palette-spacing-and-components-styling-appropriate-for-a-premium-commercial-real-estate-portal",
+      "title": "Add one coherent, non-blue/non-purple visual theme for the entire app (public portal + Agent Arena) including consistent typography, color palette, spacing, and components styling appropriate for a premium commercial real-estate portal.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-generated-static-image-assets-logo-and-minimal-ui-illustrations-icons-and-render-them-in-the-frontend-from-frontend-public-assets-generated-do-not-serve-generated-images-through-the-backend",
+      "title": "Add generated static image assets (logo and minimal UI illustrations/icons) and render them in the frontend from frontend/public/assets/generated (do not serve generated images through the backend).",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-agent-arena-frontend-flow-to-handle-the-backend-s-new-user-no-profile-yet-state-without-getting-stuck-on-loading-or-failing-silently-and-display-a-clear-english-error-message-when-login-profile-loading-fails",
+      "title": "Update the Agent Arena frontend flow to handle the backend’s “new user / no profile yet” state without getting stuck on loading or failing silently, and display a clear English error message when login/profile loading fails.",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-replace-the-agent-arena-entry-flow-at-route-agent-to-use-an-agent-code-gate-instead-of-internet-identity-login-signup-show-a-single-input-for-the-agent-code-and-a-submit-button-when-the-correct-code-050702-is-entered-persist-the-authorized-state-locally-e-g-localstorage-and-navigate-to-agent-dashboard-all-user-facing-text-must-be-in-english",
+      "title": "Replace the Agent Arena entry flow at route \"/agent\" to use an \"Agent Code\" gate instead of Internet Identity login/signup: show a single input for the agent code and a submit button; when the correct code \"050702\" is entered, persist the authorized state locally (e.g., localStorage) and navigate to \"/agent/dashboard\". All user-facing text must be in English.",
+      "reqIds": [
+        "REQ-12"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-route-protection-for-all-agent-arena-pages-agent-dashboard-agent-properties-agent-properties-new-agent-properties-edit-id-to-authorize-access-based-on-the-locally-stored-agent-code-authorization-state-not-internet-identity-identity-role-if-unauthorized-show-an-access-denied-screen-with-a-button-link-back-to-agent",
+      "title": "Update route protection for all Agent Arena pages (\"/agent/dashboard\", \"/agent/properties\", \"/agent/properties/new\", \"/agent/properties/edit/:id\") to authorize access based on the locally-stored Agent Code authorization state (not Internet Identity identity/role). If unauthorized, show an \"Access Denied\" screen with a button/link back to \"/agent\".",
+      "reqIds": [
+        "REQ-13"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-change-the-agent-dashboard-logout-behavior-to-log-out-of-the-agent-code-session-clear-the-locally-stored-authorization-state-and-any-related-cached-agent-data-and-then-return-the-user-to-the-agent-arena-entry-page",
+      "title": "Change the Agent Dashboard logout behavior to log out of the Agent Code session (clear the locally-stored authorization state and any related cached agent data) and then return the user to the Agent Arena entry page.",
+      "reqIds": [
+        "REQ-14"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-frontend-data-layer-so-that-create-update-delete-property-mutations-always-send-the-agent-code-to-the-backend-and-display-a-clear-english-error-message-when-the-backend-rejects-an-operation-due-to-an-invalid-missing-agent-code",
+      "title": "Update the frontend data layer so that create/update/delete property mutations always send the agent code to the backend, and display a clear English error message when the backend rejects an operation due to an invalid/missing agent code.",
+      "reqIds": [
+        "REQ-16"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Frontend: listings search with location bar, commercial type selector (office/retail), area (sqft) filter, price filter, and search action to run filters",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Frontend: listing details page when a user clicks a listing, showing full property details and photos",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Frontend: \"Contact the agent\" button that redirects to WhatsApp chat with +971 553723617",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Backend \"Agent Arena\": add/manage property listings including property details and photo uploads",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-9",
+      "summary": "Create the backend canister (single Motoko actor) named/used by the frontend as “Agent Arena” that stores property listings and supports querying listings and listing details with filtering by location text, property type (Office/Retail), area (sqft), and price.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-11",
+      "summary": "Align backend access control checks with the intended roles: property creation/editing/deletion must be restricted to authenticated agents, while public listing queries must remain public.",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-12",
+      "summary": "Replace Agent Arena login/signup with an \"Agent Code\" access gate: prompt for agent code (050702) and only allow backend add/edit listing features when the correct code is entered.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-16",
+      "summary": "Enforce the Agent Code on the backend for all listing management operations: property creation, property update, and property deletion must require the correct agent code \"050702\"; public listing queries must remain publicly accessible without any agent code.",
+      "reqIds": [
+        "REQ-15"
+      ],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "officerentdubai.com",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

@@ -1,0 +1,40 @@
+{
+  "kind": "spec_vs_diff_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-16T02:39:52.052Z",
+  "summary": "Frontend adds an Agent Code gate with localStorage-based authorization and applies an AgentProtectedRoute wrapper plus logout clearing auth state/cache. However, backend enforcement of the agent code for create/update/delete is not evidenced in the provided backend diff snippet, and frontend mutations sending the agent code to backend are not conclusively evidenced due to truncation.",
+  "missing_requirements": [
+    {
+      "id": "REQ-15",
+      "requirement": "Enforce the Agent Code on the backend for all listing management operations (create/update/delete require code \"050702\"; public listing queries remain public; no Internet Identity dependency).",
+      "reason": "The backend diff excerpt only shows a new `agentCode = \"050702\"` constant/comment and still includes AccessControl/authorization mixins and user-profile authorization checks; no create/update/delete function signatures or guards checking a provided agent code are shown in the truncated snippet.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-16",
+      "requirement": "Update the frontend data layer so create/update/delete mutations always send the agent code to the backend, and show a clear English error when backend rejects due to invalid/missing code.",
+      "reason": "Although `agentCodeAuth` is imported in `useQueries.ts`, the diff excerpt is truncated before any create/update/delete mutation implementations, so there is no direct evidence that mutations pass an agent code parameter to backend calls.",
+      "evidence": [
+        "frontend/src/hooks/useQueries.ts"
+      ]
+    }
+  ],
+  "hallucinated_features": [],
+  "confidence": 0.64,
+  "changed_files": [
+    "backend/main.mo",
+    "frontend-file-summaries.txt",
+    "frontend/src/components/auth/AgentProtectedRoute.tsx",
+    "frontend/src/components/auth/AuthLoadErrorCard.tsx",
+    "frontend/src/components/auth/ProfileSetupModal.tsx",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/pages/agent/AgentArenaEntryPage.tsx",
+    "frontend/src/pages/agent/AgentDashboardPage.tsx",
+    "frontend/src/pages/agent/ManagePropertiesPage.tsx",
+    "frontend/src/pages/agent/PropertyEditorPage.tsx",
+    "frontend/src/utils/agentCodeAuth.ts",
+    "project_state.json"
+  ]
+}

@@ -1,0 +1,92 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Agent Code gate for Agent Arena access and listing mutations",
+  "requirements": [
+    {
+      "id": "REQ-12",
+      "summary": "Replace /agent Internet Identity entry with an Agent Code gate that persists local authorization and redirects to /agent/dashboard on success.",
+      "acceptanceCriteria": [
+        "Visiting /agent no longer shows an Internet Identity login button; it shows an Agent Code input and submit action.",
+        "Entering code 050702 grants access and redirects the user to /agent/dashboard.",
+        "Entering an incorrect code shows a clear error message (English) and does not grant access.",
+        "Refreshing the page after successful entry keeps the user authorized without re-entering the code (until they explicitly log out)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/utils/agentCodeAuth.ts",
+          "operation": "create",
+          "description": "Create a small Agent Code auth utility that persists an 'authorized' state in localStorage, exposes helpers to check/set/clear authorization, and (optionally) returns the stored code for use in listing mutations."
+        },
+        {
+          "path": "frontend/src/pages/agent/AgentArenaEntryPage.tsx",
+          "operation": "modify",
+          "description": "Replace the Internet Identity login/signup UI with an English-only Agent Code form (single input + submit). On correct code (050702), persist authorization via the agentCodeAuth utility and navigate to /agent/dashboard; on incorrect code, show an inline English error message. If already authorized on load, immediately navigate to /agent/dashboard."
+        }
+      ]
+    },
+    {
+      "id": "REQ-13",
+      "summary": "Protect all /agent/* pages using the locally-stored Agent Code authorization state and show an Access Denied screen when unauthorized.",
+      "acceptanceCriteria": [
+        "If the agent code has not been accepted, navigating directly to any /agent/* page shows Access Denied and a link to /agent.",
+        "If the agent code has been accepted, /agent/* pages render normally.",
+        "No calls to user-role-based gating are required to allow access once the agent code is accepted."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/auth/AgentProtectedRoute.tsx",
+          "operation": "modify",
+          "description": "Refactor AgentProtectedRoute to authorize purely via the agentCodeAuth local authorization state (remove Internet Identity + user-role checks). When unauthorized, render an 'Access Denied' screen with a button/link back to /agent."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Verify all Agent Arena routes (/agent/dashboard, /agent/properties, /agent/properties/new, /agent/properties/edit/$id) remain wrapped/protected by AgentProtectedRoute usage in their page components (no new routes required)."
+        }
+      ]
+    },
+    {
+      "id": "REQ-14",
+      "summary": "Update Agent Dashboard logout to clear the Agent Code session (and related cached data) and return to /agent.",
+      "acceptanceCriteria": [
+        "Clicking Logout clears the saved agent-code authorization state.",
+        "After Logout, navigating to /agent/dashboard (or any /agent/* route) is blocked until the correct agent code is entered again.",
+        "Logout flow does not require Internet Identity."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/agent/AgentDashboardPage.tsx",
+          "operation": "modify",
+          "description": "Change Logout to clear Agent Code authorization via agentCodeAuth, clear any related cached client state (e.g., React Query cache), and navigate back to /agent without invoking Internet Identity logout."
+        }
+      ]
+    },
+    {
+      "id": "REQ-16",
+      "summary": "Ensure create/update/delete property mutations always provide the agent code to the backend and show clear English errors when unauthorized.",
+      "acceptanceCriteria": [
+        "Creating a property from the Agent Arena succeeds only when the agent code gate has been passed.",
+        "Editing and deleting a property from the Agent Arena succeeds only when the agent code gate has been passed.",
+        "If the agent code is cleared/absent and a mutation is attempted, the UI shows an English error indicating access is not authorized and guides the user back to /agent to enter the agent code again."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Update create/update/delete property mutations to always pass the locally-stored agent code to backend calls (per backend interface). If the agent code is missing, fail fast with a clear English error. If the backend rejects due to invalid/missing code, surface a clear English error suitable for UI display that guides the user to return to /agent to re-enter the code."
+        },
+        {
+          "path": "frontend/src/pages/agent/ManagePropertiesPage.tsx",
+          "operation": "modify",
+          "description": "Improve delete error handling to display a clear English authorization error when a mutation fails due to missing/invalid agent code, including guidance to go back to /agent to enter the agent code again."
+        },
+        {
+          "path": "frontend/src/pages/agent/PropertyEditorPage.tsx",
+          "operation": "modify",
+          "description": "Improve create/update error handling to display a clear English authorization error when a mutation fails due to missing/invalid agent code, including guidance to go back to /agent to enter the agent code again."
+        }
+      ]
+    }
+  ]
+}
