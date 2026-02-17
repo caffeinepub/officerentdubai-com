@@ -1,14 +1,22 @@
 import { Button } from '@/components/ui/button';
-import { MessageCircle } from 'lucide-react';
 import { SiWhatsapp } from 'react-icons/si';
 
 interface ContactAgentButtonProps {
   propertyTitle: string;
+  listingUrl?: string;
 }
 
-export default function ContactAgentButton({ propertyTitle }: ContactAgentButtonProps) {
+export default function ContactAgentButton({ propertyTitle, listingUrl }: ContactAgentButtonProps) {
   const phoneNumber = '971553723617';
-  const message = encodeURIComponent(`Hi, I'm interested in the property: ${propertyTitle}`);
+  
+  // Construct the message with property title and URL
+  let messageText = `Hi, I'm interested in the property: ${propertyTitle}`;
+  
+  // Add the listing URL if provided, otherwise use current page URL
+  const urlToInclude = listingUrl || window.location.href;
+  messageText += `\n\nProperty Link: ${urlToInclude}`;
+  
+  const message = encodeURIComponent(messageText);
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
 
   return (

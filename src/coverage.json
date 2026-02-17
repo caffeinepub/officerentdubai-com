@@ -1,74 +1,64 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-16T14:00:51.381Z",
+  "generatedAt": "2026-02-17T01:16:14.563Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 4,
+    "total": 3,
     "implemented": 3,
     "items": [
       {
-        "id": "REQ-25",
-        "summary": "Extend the backend Property model and create/update params to store (a) permit number, (b) furnishing status with all options (Furnished, Semi-Furnished, Unfurnished), and (c) number of washrooms; ensure these fields are returned by all public property query methods and by getPropertyById.",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-26",
-        "summary": "Update the Agent Arena property create/edit form to allow agents to input Permit Number, select Furnishing Status (Furnished / Semi-Furnished / Unfurnished), and enter Washrooms (number), and ensure these values are sent in create/update mutations to the backend.",
+        "id": "REQ-34",
+        "summary": "Add Google Places Autocomplete API support to provide live location/building name suggestions for the public search Location input, restricted to UAE (components=country:AE) and biased toward Dubai, using the user’s typed input.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/agent/PropertyForm.tsx",
-          "frontend/src/pages/agent/PropertyEditorPage.tsx",
-          "frontend/src/hooks/useQueries.ts",
-          "frontend/src/backend.d.ts"
+          "frontend/src/utils/googlePlacesLoader.ts",
+          "frontend/src/hooks/useGooglePlacesAutocomplete.ts",
+          "frontend/src/components/search/PropertySearchBar.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/components/agent/PropertyForm.tsx",
-          "frontend/src/pages/agent/PropertyEditorPage.tsx",
-          "frontend/src/hooks/useQueries.ts",
-          "frontend/src/backend.d.ts"
+          "frontend/src/utils/googlePlacesLoader.ts",
+          "frontend/src/hooks/useGooglePlacesAutocomplete.ts",
+          "frontend/src/components/search/PropertySearchBar.tsx"
         ]
       },
       {
-        "id": "REQ-27",
-        "summary": "Display Permit Number, Furnishing Status, and Washrooms on the public frontend listings UI, including the listing card and the listing details page, using clear English labels.",
+        "id": "REQ-35",
+        "summary": "Introduce a configurable Google Places API key for the frontend (do not hardcode secrets in source). If the key is missing at runtime/build time, show a clear English fallback behavior and avoid making failing requests.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/listings/PropertyCard.tsx",
-          "frontend/src/pages/ListingDetailsPage.tsx"
+          "frontend/src/config/publicEnv.ts",
+          "frontend/src/hooks/useGooglePlacesAutocomplete.ts",
+          "frontend/src/components/search/PropertySearchBar.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/components/listings/PropertyCard.tsx",
-          "frontend/src/pages/ListingDetailsPage.tsx"
+          "frontend/src/config/publicEnv.ts",
+          "frontend/src/hooks/useGooglePlacesAutocomplete.ts",
+          "frontend/src/components/search/PropertySearchBar.tsx"
         ]
       },
       {
-        "id": "REQ-28",
-        "summary": "Add a public search filter for Furnishing Status to the existing PropertySearchBar and make search results respect this filter when applied.",
+        "id": "REQ-36",
+        "summary": "Keep (or add) a backend-provided autocomplete fallback using the existing `getAutocompleteSuggestions(input, maxResults)` method so the public search location typeahead can still work when Google is unavailable, and ensure the frontend can switch between Google-based suggestions and backend-based suggestions safely.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/search/PropertySearchBar.tsx",
-          "frontend/src/pages/PublicListingsPage.tsx",
           "frontend/src/hooks/useQueries.ts",
-          "frontend/src/backend.d.ts"
+          "frontend/src/hooks/useLocationAutocompleteSuggestions.ts",
+          "frontend/src/components/search/PropertySearchBar.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/components/search/PropertySearchBar.tsx",
-          "frontend/src/pages/PublicListingsPage.tsx",
           "frontend/src/hooks/useQueries.ts",
-          "frontend/src/backend.d.ts"
+          "frontend/src/hooks/useLocationAutocompleteSuggestions.ts",
+          "frontend/src/components/search/PropertySearchBar.tsx"
         ]
       }
     ]
   },
   "changedFiles": [
     "backend/main.mo",
-    "backend/migration.mo",
     "build-request.json",
     "caffeine.lock.json",
     "feature_evidence.json",
@@ -76,15 +66,15 @@
     "frontend-implementation-plan.json",
     "frontend/src/backend.d.ts",
     "frontend/src/backend.ts",
-    "frontend/src/components/agent/PropertyForm.tsx",
-    "frontend/src/components/listings/PropertyCard.tsx",
     "frontend/src/components/search/PropertySearchBar.tsx",
+    "frontend/src/config.ts",
+    "frontend/src/config/publicEnv.ts",
     "frontend/src/declarations/backend.did.d.ts",
     "frontend/src/declarations/backend.did.js",
+    "frontend/src/hooks/useGooglePlacesAutocomplete.ts",
+    "frontend/src/hooks/useLocationAutocompleteSuggestions.ts",
     "frontend/src/hooks/useQueries.ts",
-    "frontend/src/pages/ListingDetailsPage.tsx",
-    "frontend/src/pages/PublicListingsPage.tsx",
-    "frontend/src/pages/agent/PropertyEditorPage.tsx",
+    "frontend/src/utils/googlePlacesLoader.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

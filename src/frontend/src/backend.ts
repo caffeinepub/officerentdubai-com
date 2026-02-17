@@ -151,10 +151,10 @@ export interface backendInterface {
     _caffeineStorageUpdateGatewayPrincipals(): Promise<void>;
     _initializeAccessControlWithSecret(userSecret: string): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
-    createProperty(params: CreatePropertyParams): Promise<void>;
-    deleteProperty(propertyId: bigint): Promise<void>;
+    createPropertyWithCode(params: CreatePropertyParams, agentCode: string): Promise<void>;
+    deletePropertyWithCode(propertyId: bigint, agentCode: string): Promise<void>;
     getAllProperties(): Promise<Array<Property>>;
-    getAutocompleteSuggestions(input: string, maxResults: bigint | null): Promise<Array<string>>;
+    getBackendAutocompleteSuggestions(input: string, maxResults: bigint | null): Promise<Array<string>>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
     getPropertiesByAreaRange(minArea: bigint, maxArea: bigint): Promise<Array<Property>>;
@@ -167,7 +167,7 @@ export interface backendInterface {
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     isCallerAdmin(): Promise<boolean>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
-    updateProperty(propertyId: bigint, params: CreatePropertyParams): Promise<void>;
+    updatePropertyWithCode(propertyId: bigint, params: CreatePropertyParams, agentCode: string): Promise<void>;
 }
 import type { CreatePropertyParams as _CreatePropertyParams, ExternalBlob as _ExternalBlob, FurnishingStatus as _FurnishingStatus, Property as _Property, PropertyType as _PropertyType, UserProfile as _UserProfile, UserRole as _UserRole, _CaffeineStorageRefillInformation as __CaffeineStorageRefillInformation, _CaffeineStorageRefillResult as __CaffeineStorageRefillResult } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
@@ -284,31 +284,31 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async createProperty(arg0: CreatePropertyParams): Promise<void> {
+    async createPropertyWithCode(arg0: CreatePropertyParams, arg1: string): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.createProperty(await to_candid_CreatePropertyParams_n10(this._uploadFile, this._downloadFile, arg0));
+                const result = await this.actor.createPropertyWithCode(await to_candid_CreatePropertyParams_n10(this._uploadFile, this._downloadFile, arg0), arg1);
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.createProperty(await to_candid_CreatePropertyParams_n10(this._uploadFile, this._downloadFile, arg0));
+            const result = await this.actor.createPropertyWithCode(await to_candid_CreatePropertyParams_n10(this._uploadFile, this._downloadFile, arg0), arg1);
             return result;
         }
     }
-    async deleteProperty(arg0: bigint): Promise<void> {
+    async deletePropertyWithCode(arg0: bigint, arg1: string): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.deleteProperty(arg0);
+                const result = await this.actor.deletePropertyWithCode(arg0, arg1);
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.deleteProperty(arg0);
+            const result = await this.actor.deletePropertyWithCode(arg0, arg1);
             return result;
         }
     }
@@ -326,17 +326,17 @@ export class Backend implements backendInterface {
             return from_candid_vec_n18(this._uploadFile, this._downloadFile, result);
         }
     }
-    async getAutocompleteSuggestions(arg0: string, arg1: bigint | null): Promise<Array<string>> {
+    async getBackendAutocompleteSuggestions(arg0: string, arg1: bigint | null): Promise<Array<string>> {
         if (this.processError) {
             try {
-                const result = await this.actor.getAutocompleteSuggestions(arg0, to_candid_opt_n27(this._uploadFile, this._downloadFile, arg1));
+                const result = await this.actor.getBackendAutocompleteSuggestions(arg0, to_candid_opt_n27(this._uploadFile, this._downloadFile, arg1));
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.getAutocompleteSuggestions(arg0, to_candid_opt_n27(this._uploadFile, this._downloadFile, arg1));
+            const result = await this.actor.getBackendAutocompleteSuggestions(arg0, to_candid_opt_n27(this._uploadFile, this._downloadFile, arg1));
             return result;
         }
     }
@@ -508,17 +508,17 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async updateProperty(arg0: bigint, arg1: CreatePropertyParams): Promise<void> {
+    async updatePropertyWithCode(arg0: bigint, arg1: CreatePropertyParams, arg2: string): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.updateProperty(arg0, await to_candid_CreatePropertyParams_n10(this._uploadFile, this._downloadFile, arg1));
+                const result = await this.actor.updatePropertyWithCode(arg0, await to_candid_CreatePropertyParams_n10(this._uploadFile, this._downloadFile, arg1), arg2);
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.updateProperty(arg0, await to_candid_CreatePropertyParams_n10(this._uploadFile, this._downloadFile, arg1));
+            const result = await this.actor.updatePropertyWithCode(arg0, await to_candid_CreatePropertyParams_n10(this._uploadFile, this._downloadFile, arg1), arg2);
             return result;
         }
     }

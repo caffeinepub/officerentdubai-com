@@ -4,6 +4,7 @@ import type { Property, PropertyType, FurnishingStatus, UserProfile, UserRole, C
 import { ExternalBlob } from '../backend';
 import { agentCodeAuth } from '../utils/agentCodeAuth';
 import { useDebouncedValue } from './useDebouncedValue';
+import { normalizeBackendError } from '../utils/backendError';
 
 export function useGetCallerUserProfile() {
   const { actor, isFetching: actorFetching } = useActor();
@@ -54,18 +55,22 @@ export function useGetCallerUserRole() {
   });
 }
 
-export function useAutocompleteSuggestions(input: string) {
+/**
+ * Backend autocomplete suggestions hook (fallback for when Google Places is not configured).
+ * Fetches suggestions from stored properties' location and title fields.
+ */
+export function useBackendAutocompleteSuggestions(input: string) {
   const { actor, isFetching: actorFetching } = useActor();
   const debouncedInput = useDebouncedValue(input, 300);
 
   return useQuery<string[]>({
-    queryKey: ['autocomplete', debouncedInput],
+    queryKey: ['autocomplete', 'backend', debouncedInput],
     queryFn: async () => {
       if (!actor) return [];
       try {
-        return await actor.getAutocompleteSuggestions(debouncedInput, BigInt(10));
+        return await actor.getBackendAutocompleteSuggestions(debouncedInput, BigInt(10));
       } catch (error) {
-        console.error('Autocomplete error:', error);
+        console.error('Backend autocomplete error:', error);
         return [];
       }
     },
@@ -210,7 +215,24 @@ export function useCreateProperty() {
         permitNumber: data.permitNumber,
       };
       
-      return actor.createProperty(params);
+      const agentCode = agentCodeAuth.getAgentCode();
+      
+      try {
+        return await actor.createPropertyWithCode(params, agentCode);
+      } catch (error) {
+        const normalized = normalizeBackendError(error);
+        console.error('Create property error:', {
+          message: normalized.message,
+          isAuthError: normalized.isAuthorizationError,
+          original: normalized.originalError,
+        });
+        
+        if (normalized.isAuthorizationError) {
+          throw new Error('Authorization failed: Invalid agent code. Please return to /agent and enter your agent code again.');
+        }
+        
+        throw new Error(normalized.message);
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['properties'] });
@@ -256,11 +278,28 @@ export function useUpdateProperty() {
         permitNumber: data.permitNumber,
       };
       
-      return actor.updateProperty(data.propertyId, params);
+      const agentCode = agentCodeAuth.getAgentCode();
+      
+      try {
+        return await actor.updatePropertyWithCode(data.propertyId, params, agentCode);
+      } catch (error) {
+        const normalized = normalizeBackendError(error);
+        console.error('Update property error:', {
+          message: normalized.message,
+          isAuthError: normalized.isAuthorizationError,
+          original: normalized.originalError,
+        });
+        
+        if (normalized.isAuthorizationError) {
+          throw new Error('Authorization failed: Invalid agent code. Please return to /agent and enter your agent code again.');
+        }
+        
+        throw new Error(normalized.message);
+      }
     },
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['properties'] });
-      queryClient.invalidateQueries({ queryKey: ['property'] });
+      queryClient.invalidateQueries({ queryKey: ['property', variables.propertyId.toString()] });
     },
   });
 }
@@ -277,8 +316,26 @@ export function useDeleteProperty() {
       if (!agentCodeAuth.isAuthorized()) {
         throw new Error('Authorization required. Please return to /agent and enter your agent code.');
       }
+
+      const agentCode = agentCodeAuth.getAgentCode();
       
-      return actor.deleteProperty(propertyId);
+      try {
+        return await actor.deletePropertyWithCode(propertyId, agentCode);
+      } catch (error) {
+        const normalized = normalizeBackendError(error);
+        console.error('Delete property error:', {
+          message: normalized.message,
+          isAuthError: normalized.isAuthorizationError,
+          original: normalized.originalError,
+          propertyId: propertyId.toString(),
+        });
+        
+        if (normalized.isAuthorizationError) {
+          throw new Error('Authorization failed: Invalid agent code. Please return to /agent and enter your agent code again.');
+        }
+        
+        throw new Error(normalized.message);
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['properties'] });

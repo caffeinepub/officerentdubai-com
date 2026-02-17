@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 17,
+  "projectStateVersion": 23,
   "summary": "Build officerentdubai.com, a commercial property rental portal with a searchable/filterable listings frontend and an agent backend (\"Agent Arena\") to manage properties, including photos, with WhatsApp contact to a fixed number. Agent Arena access should be gated by an \"Agent Code\" entry (050702) instead of login/signup.",
   "architectural_notes": [
     "Project is a commercial property rental portal with separate public frontend and agent backend (\"Agent Arena\").",
@@ -8,10 +8,13 @@
     "Agent Arena authentication should be replaced by a simple Agent Code gate (code: 050702) to access add/edit listing features.",
     "Google Search Console verification file provided: serve /googlea70a8e0aae5c8967.html at site root with content exactly: \"google-site-verification: googlea70a8e0aae5c8967.html\" (ensure SPA routing does not intercept).",
     "Extend property/listing schema to include furnishingStatus (Furnished/Semi-Furnished/Unfurnished), washrooms (number), and permitNumber (string) and persist these fields in Agent Arena backend + expose in public queries.",
-    "WhatsApp contact deep-link should prefill a message that includes the listing title (still always targeting +971 553723617)."
+    "WhatsApp contact deep-link should prefill a message that includes the listing title (still always targeting +971 553723617).",
+    "Location/building suggestions should be powered by Google Places Autocomplete API (restricted to UAE/Dubai as appropriate); Google does not provide a downloadable full list of Dubai buildings."
   ],
   "known_issues": [
-    "Agent Arena backend: agents are currently unable to sign up and/or log in (authentication flow failing)."
+    "Agent Arena backend: agents are currently unable to sign up and/or log in (authentication flow failing).",
+    "WhatsApp contact CTA: prefilled WhatsApp message is not including the listing property link/details when a client requests more information (agent is not receiving the listing link in the message).",
+    "Agent Arena: adding/creating properties is showing an error (property creation failing)."
   ],
   "isFixRequest": false,
   "existing_features": [
@@ -176,6 +179,62 @@
         "REQ-28"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-update-the-public-listing-details-page-whatsapp-cta-so-that-when-a-user-clicks-contact-agent-on-whatsapp-the-prefilled-whatsapp-message-includes-both-a-the-property-title-and-b-the-full-url-link-to-the-specific-property-listing-details-page-the-user-is-viewing-so-the-agent-receives-the-listing-link-in-whatsapp",
+      "title": "Update the public listing details page WhatsApp CTA so that when a user clicks \"Contact Agent on WhatsApp\", the prefilled WhatsApp message includes both (a) the property title and (b) the full URL link to the specific property listing details page the user is viewing, so the agent receives the listing link in WhatsApp.",
+      "reqIds": [
+        "REQ-29"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-the-contactagentbutton-component-supports-constructing-including-the-listing-url-in-the-whatsapp-message-e-g-by-accepting-a-listing-id-and-or-an-explicit-listing-url-from-the-listing-details-page-and-keeps-all-user-facing-text-in-english",
+      "title": "Ensure the ContactAgentButton component supports constructing/including the listing URL in the WhatsApp message (e.g., by accepting a listing id and/or an explicit listing URL from the Listing Details page) and keeps all user-facing text in English.",
+      "reqIds": [
+        "REQ-30"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-frontend-data-layer-for-property-mutations-to-always-send-the-agent-code-to-the-backend-for-create-update-delete-property-operations-and-surface-clear-english-error-messages-when-the-backend-rejects-a-mutation-due-to-a-missing-invalid-agent-code",
+      "title": "Update the frontend data layer for property mutations to always send the Agent Code to the backend for create/update/delete property operations, and surface clear English error messages when the backend rejects a mutation due to a missing/invalid Agent Code.",
+      "reqIds": [
+        "REQ-32"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-improve-agent-arena-property-submission-error-diagnostics-so-that-when-property-creation-fails-the-ui-logs-and-displays-a-more-specific-english-error-message-derived-from-the-backend-error-while-still-handling-generic-failures-gracefully",
+      "title": "Improve Agent Arena property submission error diagnostics so that, when property creation fails, the UI logs and displays a more specific English error message derived from the backend error (while still handling generic failures gracefully).",
+      "reqIds": [
+        "REQ-33"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-google-places-autocomplete-api-support-to-provide-live-location-building-name-suggestions-for-the-public-search-location-input-restricted-to-uae-components-country-ae-and-biased-toward-dubai-using-the-user-s-typed-input",
+      "title": "Add Google Places Autocomplete API support to provide live location/building name suggestions for the public search Location input, restricted to UAE (components=country:AE) and biased toward Dubai, using the user’s typed input.",
+      "reqIds": [
+        "REQ-34"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-introduce-a-configurable-google-places-api-key-for-the-frontend-do-not-hardcode-secrets-in-source-if-the-key-is-missing-at-runtime-build-time-show-a-clear-english-fallback-behavior-and-avoid-making-failing-requests",
+      "title": "Introduce a configurable Google Places API key for the frontend (do not hardcode secrets in source). If the key is missing at runtime/build time, show a clear English fallback behavior and avoid making failing requests.",
+      "reqIds": [
+        "REQ-35"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-keep-or-add-a-backend-provided-autocomplete-fallback-using-the-existing-getautocompletesuggestions-input-maxresults-method-so-the-public-search-location-typeahead-can-still-work-when-google-is-unavailable-and-ensure-the-frontend-can-switch-between-google-based-suggestions-and-backend-based-suggestions-safely",
+      "title": "Keep (or add) a backend-provided autocomplete fallback using the existing `getAutocompleteSuggestions(input, maxResults)` method so the public search location typeahead can still work when Google is unavailable, and ensure the frontend can switch between Google-based suggestions and backend-based suggestions safely.",
+      "reqIds": [
+        "REQ-36"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -283,6 +342,20 @@
       "reqIds": [
         "REQ-25"
       ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-25",
+      "summary": "Update backend property management methods so that creating, updating, and deleting properties are authorized by a required Agent Code value \"050702\" (not by Internet Identity admin permissions), while keeping all public property browsing queries publicly accessible.",
+      "reqIds": [
+        "REQ-31"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-26",
+      "summary": "Integrate Google Places Autocomplete API to provide live Dubai/UAE location + building name suggestions in the public search Location bar (and corresponding backend support if needed), instead of relying only on stored property data.",
+      "reqIds": [],
       "status": "pending"
     }
   ],

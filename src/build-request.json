@@ -1,101 +1,75 @@
 {
   "kind": "build_request",
-  "title": "Add Permit Number + Furnishing Status (all options) + Washroom Count to listings and Agent Arena",
+  "title": "Integrate Google Places Autocomplete for Dubai location/building suggestions",
+  "projectName": "OfficerRentDubai",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-25",
-      "text": "Extend the backend Property model and create/update params to store (a) permit number, (b) furnishing status with all options (Furnished, Semi-Furnished, Unfurnished), and (c) number of washrooms; ensure these fields are returned by all public property query methods and by getPropertyById.",
-      "target": "backend",
-      "source": {
-        "messageIds": [
-          "msg-5",
-          "msg-6"
-        ],
-        "quotes": [
-          "please add the furnished , unfurnished filter option in front end and show number of washroom in listings add option in back end to add number of washroom and furnishing status.",
-          "include all option and add listing permit number in front end and add option to enter permit number in back end"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Backend Property type includes new fields for permit number, furnishing status, and washrooms.",
-        "Backend CreatePropertyParams (and the update path) accepts the new fields and persists them on create/update.",
-        "All property query functions (getAllProperties, getPropertiesBy*, getPropertyById, etc.) return the new fields to the frontend without trapping or omitting them."
-      ]
-    },
-    {
-      "id": "REQ-26",
-      "text": "Update the Agent Arena property create/edit form to allow agents to input Permit Number, select Furnishing Status (Furnished / Semi-Furnished / Unfurnished), and enter Washrooms (number), and ensure these values are sent in create/update mutations to the backend.",
+      "id": "REQ-34",
+      "text": "Add Google Places Autocomplete API support to provide live location/building name suggestions for the public search Location input, restricted to UAE (components=country:AE) and biased toward Dubai, using the user’s typed input.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-5",
-          "msg-6"
+          "msg-user-1"
         ],
         "quotes": [
-          "add option in back end to add number of washroom and furnishing status",
-          "add option to enter permit number in back end"
+          "Google Places Autocomplete API. we can add this api"
         ]
       },
       "acceptanceCriteria": [
-        "On /agent/properties/new and /agent/properties/edit/:id, the form includes fields labeled in English: \"Permit Number\", \"Furnishing Status\", and \"Washrooms\".",
-        "Furnishing Status offers exactly 3 options: Furnished, Semi-Furnished, Unfurnished.",
-        "Creating a property saves these values; editing a property pre-fills the fields from existing listing data and saving updates them.",
-        "If required validation is applied, validation messages (if any) are in English."
+        "When a user types in the public Location input, the app fetches autocomplete suggestions from Google Places Autocomplete API using the current input value.",
+        "The request restricts results to UAE via `components=country:AE` and applies a Dubai bias (e.g., location/radius or other supported request parameters) so suggestions prioritize Dubai locations/buildings.",
+        "Suggestions are displayed in the existing typeahead dropdown and remain selectable by mouse and keyboard (ArrowUp/ArrowDown/Enter/Escape) as currently implemented.",
+        "Selecting a Google suggestion populates the Location input with the selected suggestion text.",
+        "If the Google API returns an error or no results, the UI fails gracefully without breaking search input behavior."
       ]
     },
     {
-      "id": "REQ-27",
-      "text": "Display Permit Number, Furnishing Status, and Washrooms on the public frontend listings UI, including the listing card and the listing details page, using clear English labels.",
+      "id": "REQ-35",
+      "text": "Introduce a configurable Google Places API key for the frontend (do not hardcode secrets in source). If the key is missing at runtime/build time, show a clear English fallback behavior and avoid making failing requests.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-5",
-          "msg-6"
+          "msg-user-1"
         ],
         "quotes": [
-          "show number of washroom in listings",
-          "add listing permit number in front end"
+          "Google Places Autocomplete API. we can add this api"
         ]
       },
       "acceptanceCriteria": [
-        "Property cards show the washrooms count and/or permit number in a readable way without breaking the existing layout.",
-        "Listing details page shows Permit Number, Furnishing Status, and Washrooms with English labels.",
-        "If a listing is missing one of these values (e.g., older data), the UI handles it gracefully (e.g., hides the row or shows \"N/A\" in English) without crashing."
+        "The Google Places API key is read from a frontend configuration mechanism (e.g., a build-time environment variable) rather than being hardcoded in the repository.",
+        "If the API key is not configured, the Location autocomplete does not spam failing network calls; instead it either (a) falls back to existing backend-powered suggestions (stored properties) or (b) disables autocomplete and shows a clear English message indicating autocomplete is unavailable until configured.",
+        "All user-facing text introduced for this state is in English."
       ]
     },
     {
-      "id": "REQ-28",
-      "text": "Add a public search filter for Furnishing Status to the existing PropertySearchBar and make search results respect this filter when applied.",
+      "id": "REQ-36",
+      "text": "Keep (or add) a backend-provided autocomplete fallback using the existing `getAutocompleteSuggestions(input, maxResults)` method so the public search location typeahead can still work when Google is unavailable, and ensure the frontend can switch between Google-based suggestions and backend-based suggestions safely.",
       "target": "both",
       "source": {
         "messageIds": [
-          "msg-5",
-          "msg-6"
+          "msg-user-1"
         ],
         "quotes": [
-          "please add the furnished , unfurnished filter option in front end",
-          "include all option"
+          "Google Places Autocomplete API. we can add this api"
         ]
       },
       "acceptanceCriteria": [
-        "Public search UI includes a \"Furnishing Status\" filter with options: Furnished, Semi-Furnished, Unfurnished (and an empty/unset state).",
-        "When Furnishing Status is selected and the user clicks \"Search Properties\", the results list updates to include only listings matching that furnishing status (in addition to any other active filters).",
-        "When Furnishing Status is not selected, results behavior remains unchanged from before this update.",
-        "All user-facing text for this filter is in English."
+        "Backend continues to provide `getAutocompleteSuggestions(input, maxResults)` based on stored properties’ `location` and `title`, deduplicated case-insensitively, and limited to the requested max results.",
+        "Frontend suggestion logic uses Google Places suggestions when configured and healthy, but can fall back to backend suggestions on missing key, errors, or request failure, without changing the existing search submission behavior.",
+        "No breaking changes are introduced to property search/filtering; clicking the Search button still applies the selected/entered Location value exactly as shown in the input."
       ]
     }
   ],
   "constraints": [
-    "Backend must remain a single Motoko actor with all logic in backend/main.mo (no additional backend services).",
-    "Only create/update/delete property operations must remain protected by the Agent Code \"050702\"; public listing queries must remain publicly accessible.",
-    "Do not edit any files under frontend/src/components/ui or any paths listed in frontend.immutablePaths; compose those components instead.",
-    "Use English for all user-facing text."
+    "Do not edit files under frontend/src/components/ui (read-only UI primitives).",
+    "Do not edit frontend immutable paths: frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx.",
+    "Backend must remain a single Motoko actor in backend/main.mo; only add migration.mo if an actual stable-state upgrade is required."
   ],
   "nonGoals": [
-    "Do not change the fixed WhatsApp number (+971 553723617).",
-    "Do not add third-party authentication or external databases.",
-    "Do not redesign unrelated parts of the UI beyond what is necessary to add the new fields/filters."
+    "Do not implement full Google Maps rendering, map widgets, geolocation, or place details pages.",
+    "Do not attempt to download or store a complete offline list of all Dubai buildings (use live autocomplete only).",
+    "Do not change the property schema or listing search filters beyond what is needed to support Google autocomplete suggestions."
   ],
   "imageRequirements": {
     "required": [],

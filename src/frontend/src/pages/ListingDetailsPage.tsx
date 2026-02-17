@@ -55,6 +55,9 @@ export default function ListingDetailsPage() {
     }
   };
 
+  // Construct the full listing URL for WhatsApp sharing
+  const listingUrl = `${window.location.origin}${window.location.pathname}${window.location.hash}`;
+
   return (
     <div className="min-h-screen bg-muted/20">
       <div className="container py-8 max-w-6xl">
@@ -150,7 +153,7 @@ export default function ListingDetailsPage() {
               <p className="text-sm text-muted-foreground">
                 Contact our agent to schedule a viewing or get more information.
               </p>
-              <ContactAgentButton propertyTitle={property.title} />
+              <ContactAgentButton propertyTitle={property.title} listingUrl={listingUrl} />
             </div>
           </div>
         </div>

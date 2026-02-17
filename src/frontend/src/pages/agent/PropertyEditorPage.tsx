@@ -63,15 +63,25 @@ function PropertyEditorContent() {
       }
       navigate({ to: '/agent/properties' });
     } catch (error: any) {
-      // Check for authorization errors
-      if (error?.message?.includes('Authorization required')) {
-        toast.error('Authorization required. Please return to /agent and enter your agent code.');
-      } else if (error?.message?.includes('Unauthorized')) {
-        toast.error('Access denied. Please verify your agent code at /agent.');
+      const errorMessage = error?.message || '';
+      
+      console.error('Property submission error:', {
+        message: errorMessage,
+        isAuthError: errorMessage.toLowerCase().includes('authorization') || 
+                     errorMessage.toLowerCase().includes('agent code'),
+        fullError: error,
+      });
+
+      // Check for authorization errors with specific guidance
+      if (errorMessage.includes('Authorization failed') || 
+          errorMessage.includes('Invalid agent code') ||
+          errorMessage.includes('Authorization required')) {
+        toast.error('Authorization failed. Please return to /agent and enter your agent code again.');
+      } else if (errorMessage.toLowerCase().includes('unauthorized')) {
+        toast.error('Access denied. Please return to /agent and verify your agent code.');
       } else {
         toast.error(isEditMode ? 'Failed to update property' : 'Failed to create property');
       }
-      console.error('Submit error:', error);
     }
   };
 

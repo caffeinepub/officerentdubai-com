@@ -1,22 +1,23 @@
+// RealEstate Actor 0.1.1
 import Text "mo:core/Text";
 import Map "mo:core/Map";
+import Iter "mo:core/Iter";
 import Runtime "mo:core/Runtime";
 import Principal "mo:core/Principal";
 import Order "mo:core/Order";
 import Nat "mo:core/Nat";
 import Storage "blob-storage/Storage";
 import MixinStorage "blob-storage/Mixin";
-import Iter "mo:core/Iter";
-import Migration "migration";
-import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
+import MixinAuthorization "authorization/MixinAuthorization";
 
-(with migration = Migration.run)
 actor {
   let accessControlState = AccessControl.initState();
   include MixinAuthorization(accessControlState);
 
   include MixinStorage();
+
+  let nextId = 0;
 
   type PropertyType = {
     #office;
@@ -28,8 +29,6 @@ actor {
     #semiFurnished;
     #unfurnished;
   };
-
-  var nextId = 0;
 
   type Property = {
     id : Nat;
@@ -159,7 +158,71 @@ actor {
     };
   };
 
-  public query ({ caller }) func getAutocompleteSuggestions(input : Text, maxResults : ?Nat) : async [Text] {
+  // Property Management Functions using Agent Code
+  public shared ({ caller }) func createPropertyWithCode(params : CreatePropertyParams, agentCode : Text) : async () {
+    if (agentCode != "050702") {
+      Runtime.trap("Unauthorized: Invalid agent code");
+    };
+
+    let propertyId = nextId;
+    let property : Property = {
+      id = propertyId;
+      title = params.title;
+      location = params.location;
+      propertyType = params.propertyType;
+      furnishingStatus = params.furnishingStatus;
+      areaSquareFeet = params.areaSquareFeet;
+      price = params.price;
+      description = params.description;
+      images = params.images;
+      numberOfWashrooms = params.numberOfWashrooms;
+      permitNumber = params.permitNumber;
+    };
+
+    properties.add(propertyId, property);
+  };
+
+  public shared ({ caller }) func updatePropertyWithCode(propertyId : Nat, params : CreatePropertyParams, agentCode : Text) : async () {
+    if (agentCode != "050702") {
+      Runtime.trap("Unauthorized: Invalid agent code");
+    };
+
+    switch (properties.get(propertyId)) {
+      case (null) { Runtime.trap("Property not found") };
+      case (?_) {
+        let updatedProperty : Property = {
+          id = propertyId;
+          title = params.title;
+          location = params.location;
+          propertyType = params.propertyType;
+          furnishingStatus = params.furnishingStatus;
+          areaSquareFeet = params.areaSquareFeet;
+          price = params.price;
+          description = params.description;
+          images = params.images;
+          numberOfWashrooms = params.numberOfWashrooms;
+          permitNumber = params.permitNumber;
+        };
+        properties.add(propertyId, updatedProperty);
+      };
+    };
+  };
+
+  public shared ({ caller }) func deletePropertyWithCode(propertyId : Nat, agentCode : Text) : async () {
+    if (agentCode != "050702") {
+      Runtime.trap("Unauthorized: Invalid agent code");
+    };
+
+    switch (properties.get(propertyId)) {
+      case (null) { Runtime.trap("Property not found") };
+      case (?_) {
+        properties.remove(propertyId);
+      };
+    };
+  };
+
+  // Fallback Backend Autocomplete - kept for public typeahead without Google
+  public query ({ caller }) func getBackendAutocompleteSuggestions(input : Text, maxResults : ?Nat) : async [Text] {
     let lowercaseInput = input.toLower();
     let max = switch (maxResults) {
       case (?value) { value };
@@ -192,66 +255,5 @@ actor {
     ).take(max);
 
     results.toArray();
-  };
-
-  // Admin-Only Property Management Functions
-  public shared ({ caller }) func createProperty(params : CreatePropertyParams) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can create properties");
-    };
-    let propertyId = nextId;
-    nextId += 1;
-
-    let property : Property = {
-      id = propertyId;
-      title = params.title;
-      location = params.location;
-      propertyType = params.propertyType;
-      furnishingStatus = params.furnishingStatus;
-      areaSquareFeet = params.areaSquareFeet;
-      price = params.price;
-      description = params.description;
-      images = params.images;
-      numberOfWashrooms = params.numberOfWashrooms;
-      permitNumber = params.permitNumber;
-    };
-
-    properties.add(propertyId, property);
-  };
-
-  public shared ({ caller }) func updateProperty(propertyId : Nat, params : CreatePropertyParams) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can update properties");
-    };
-    switch (properties.get(propertyId)) {
-      case (null) { Runtime.trap("Property not found") };
-      case (?_) {
-        properties.add(propertyId, {
-          id = propertyId;
-          title = params.title;
-          location = params.location;
-          propertyType = params.propertyType;
-          furnishingStatus = params.furnishingStatus;
-          areaSquareFeet = params.areaSquareFeet;
-          price = params.price;
-          description = params.description;
-          images = params.images;
-          numberOfWashrooms = params.numberOfWashrooms;
-          permitNumber = params.permitNumber;
-        });
-      };
-    };
-  };
-
-  public shared ({ caller }) func deleteProperty(propertyId : Nat) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can delete properties");
-    };
-    switch (properties.get(propertyId)) {
-      case (null) { Runtime.trap("Property not found") };
-      case (?_) {
-        properties.remove(propertyId);
-      };
-    };
   };
 };

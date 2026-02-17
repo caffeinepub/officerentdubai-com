@@ -17,15 +17,25 @@ function ManagePropertiesContent() {
       await deleteProperty.mutateAsync(id);
       toast.success(`Property "${title}" deleted successfully`);
     } catch (error: any) {
-      // Check for authorization errors
-      if (error?.message?.includes('Authorization required')) {
-        toast.error('Authorization required. Please return to /agent and enter your agent code.');
-      } else if (error?.message?.includes('Unauthorized')) {
-        toast.error('Access denied. Please verify your agent code at /agent.');
+      const errorMessage = error?.message || '';
+      
+      console.error('Property deletion error:', {
+        message: errorMessage,
+        isAuthError: errorMessage.toLowerCase().includes('authorization') || 
+                     errorMessage.toLowerCase().includes('agent code'),
+        fullError: error,
+      });
+
+      // Check for authorization errors with specific guidance
+      if (errorMessage.includes('Authorization failed') || 
+          errorMessage.includes('Invalid agent code') ||
+          errorMessage.includes('Authorization required')) {
+        toast.error('Authorization failed. Please return to /agent and enter your agent code again.');
+      } else if (errorMessage.toLowerCase().includes('unauthorized')) {
+        toast.error('Access denied. Please return to /agent and verify your agent code.');
       } else {
         toast.error('Failed to delete property');
       }
-      console.error('Delete error:', error);
     }
   };
 
@@ -90,27 +100,38 @@ function ManagePropertiesContent() {
                   </div>
                   <CardContent className="p-4 space-y-2">
                     <div className="flex items-start justify-between gap-2">
-                      <h3 className="font-semibold line-clamp-1">{property.title}</h3>
-                      <Badge variant="secondary">{propertyTypeLabel}</Badge>
+                      <h3 className="font-semibold text-lg line-clamp-1">{property.title}</h3>
+                      <Badge variant="secondary" className="shrink-0">
+                        {propertyTypeLabel}
+                      </Badge>
                     </div>
                     <p className="text-sm text-muted-foreground line-clamp-1">
                       {property.location}
                     </p>
-                    <div className="flex items-center justify-between text-sm">
-                      <span>{property.areaSquareFeet.toString()} sqft</span>
-                      <span className="font-semibold">{property.price.toString()} AED</span>
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-2xl font-bold text-primary">
+                        AED {Number(property.price).toLocaleString()}
+                      </span>
+                      <span className="text-sm text-muted-foreground">/year</span>
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      {Number(property.areaSquareFeet).toLocaleString()} sq ft
                     </div>
                   </CardContent>
                   <CardFooter className="p-4 pt-0 flex gap-2">
-                    <Link to="/agent/properties/edit/$id" params={{ id: property.id.toString() }} className="flex-1">
-                      <Button variant="outline" size="sm" className="w-full gap-2">
+                    <Link 
+                      to="/agent/properties/edit/$id" 
+                      params={{ id: property.id.toString() }}
+                      className="flex-1"
+                    >
+                      <Button variant="outline" className="w-full gap-2">
                         <Edit className="h-4 w-4" />
                         Edit
                       </Button>
                     </Link>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
-                        <Button variant="destructive" size="sm" className="gap-2">
+                        <Button variant="destructive" className="gap-2">
                           <Trash2 className="h-4 w-4" />
                           Delete
                         </Button>

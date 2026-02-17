@@ -74,10 +74,13 @@ export interface _SERVICE {
   '_caffeineStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
-  'createProperty' : ActorMethod<[CreatePropertyParams], undefined>,
-  'deleteProperty' : ActorMethod<[bigint], undefined>,
+  'createPropertyWithCode' : ActorMethod<
+    [CreatePropertyParams, string],
+    undefined
+  >,
+  'deletePropertyWithCode' : ActorMethod<[bigint, string], undefined>,
   'getAllProperties' : ActorMethod<[], Array<Property>>,
-  'getAutocompleteSuggestions' : ActorMethod<
+  'getBackendAutocompleteSuggestions' : ActorMethod<
     [string, [] | [bigint]],
     Array<string>
   >,
@@ -99,7 +102,10 @@ export interface _SERVICE {
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
-  'updateProperty' : ActorMethod<[bigint, CreatePropertyParams], undefined>,
+  'updatePropertyWithCode' : ActorMethod<
+    [bigint, CreatePropertyParams, string],
+    undefined
+  >,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

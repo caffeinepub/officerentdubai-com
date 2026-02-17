@@ -1,5 +1,5 @@
 // Agent Code Authentication Utility
-// Manages local authorization state for Agent Arena access
+// Manages local authorization state for Agent Arena access and provides the agent code for backend mutations
 
 const STORAGE_KEY = 'agent_code_authorized';
 const AGENT_CODE = '050702';
@@ -24,7 +24,7 @@ export const agentCodeAuth = {
     localStorage.removeItem(STORAGE_KEY);
   },
 
-  // Get the agent code for backend calls
+  // Get the agent code for backend calls (returns the correct code when authorized)
   getAgentCode(): string {
     return AGENT_CODE;
   },

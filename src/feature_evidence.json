@@ -2,55 +2,12 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-update-the-agent-arena-property-create-edit-form-to-allow-agents-to-input-permit-number-select-furnishing-status-furnished-semi-furnished-unfurnished-and-enter-washrooms-number-and-ensure-these-values-are-sent-in-create-update-mutations-to-the-backend",
-      "featureTitle": "Update the Agent Arena property create/edit form to allow agents to input Permit Number, select Furnishing Status (Furnished / Semi-Furnished / Unfurnished), and enter Washrooms (number), and ensure these values are sent in create/update mutations to the backend.",
-      "files": [
-        "frontend/src/components/agent/PropertyForm.tsx",
-        "frontend/src/hooks/useQueries.ts",
-        "frontend/src/pages/agent/PropertyEditorPage.tsx"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "blob-storage@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-26"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-display-permit-number-furnishing-status-and-washrooms-on-the-public-frontend-listings-ui-including-the-listing-card-and-the-listing-details-page-using-clear-english-labels",
-      "featureTitle": "Display Permit Number, Furnishing Status, and Washrooms on the public frontend listings UI, including the listing card and the listing details page, using clear English labels.",
-      "files": [
-        "frontend/src/components/listings/PropertyCard.tsx",
-        "frontend/src/pages/ListingDetailsPage.tsx"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "blob-storage@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-27"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-add-a-public-search-filter-for-furnishing-status-to-the-existing-propertysearchbar-and-make-search-results-respect-this-filter-when-applied",
-      "featureTitle": "Add a public search filter for Furnishing Status to the existing PropertySearchBar and make search results respect this filter when applied.",
+      "featureId": "feature-add-google-places-autocomplete-api-support-to-provide-live-location-building-name-suggestions-for-the-public-search-location-input-restricted-to-uae-components-country-ae-and-biased-toward-dubai-using-the-user-s-typed-input",
+      "featureTitle": "Add Google Places Autocomplete API support to provide live location/building name suggestions for the public search Location input, restricted to UAE (components=country:AE) and biased toward Dubai, using the user’s typed input.",
       "files": [
         "frontend/src/components/search/PropertySearchBar.tsx",
-        "frontend/src/hooks/useQueries.ts",
-        "frontend/src/pages/PublicListingsPage.tsx"
+        "frontend/src/hooks/useGooglePlacesAutocomplete.ts",
+        "frontend/src/utils/googlePlacesLoader.ts"
       ],
       "components": [
         "authorization@4.0.0",
@@ -62,7 +19,51 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-28"
+        "REQ-34"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-introduce-a-configurable-google-places-api-key-for-the-frontend-do-not-hardcode-secrets-in-source-if-the-key-is-missing-at-runtime-build-time-show-a-clear-english-fallback-behavior-and-avoid-making-failing-requests",
+      "featureTitle": "Introduce a configurable Google Places API key for the frontend (do not hardcode secrets in source). If the key is missing at runtime/build time, show a clear English fallback behavior and avoid making failing requests.",
+      "files": [
+        "frontend/src/components/search/PropertySearchBar.tsx",
+        "frontend/src/config/publicEnv.ts",
+        "frontend/src/hooks/useGooglePlacesAutocomplete.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-35"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-keep-or-add-a-backend-provided-autocomplete-fallback-using-the-existing-getautocompletesuggestions-input-maxresults-method-so-the-public-search-location-typeahead-can-still-work-when-google-is-unavailable-and-ensure-the-frontend-can-switch-between-google-based-suggestions-and-backend-based-suggestions-safely",
+      "featureTitle": "Keep (or add) a backend-provided autocomplete fallback using the existing `getAutocompleteSuggestions(input, maxResults)` method so the public search location typeahead can still work when Google is unavailable, and ensure the frontend can switch between Google-based suggestions and backend-based suggestions safely.",
+      "files": [
+        "frontend/src/components/search/PropertySearchBar.tsx",
+        "frontend/src/hooks/useLocationAutocompleteSuggestions.ts",
+        "frontend/src/hooks/useQueries.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-36"
       ],
       "confidence": "high"
     }

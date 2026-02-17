@@ -3,9 +3,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search } from 'lucide-react';
+import { Search, AlertCircle } from 'lucide-react';
 import { PropertyType, FurnishingStatus } from '../../backend';
-import { useAutocompleteSuggestions } from '../../hooks/useQueries';
+import { useLocationAutocompleteSuggestions } from '../../hooks/useLocationAutocompleteSuggestions';
 
 interface PropertySearchBarProps {
   onSearch: (filters: {
@@ -33,7 +33,12 @@ export default function PropertySearchBar({ onSearch }: PropertySearchBarProps) 
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const { data: suggestions = [] } = useAutocompleteSuggestions(location);
+  const {
+    suggestions,
+    isLoading: suggestionsLoading,
+    source,
+    isGoogleConfigured,
+  } = useLocationAutocompleteSuggestions(location);
 
   const handleSearch = () => {
     const filters: {
@@ -146,6 +151,14 @@ export default function PropertySearchBar({ onSearch }: PropertySearchBarProps) 
             }}
             autoComplete="off"
           />
+          {!isGoogleConfigured && location.trim().length > 0 && (
+            <div className="flex items-start gap-2 mt-1 text-xs text-muted-foreground">
+              <AlertCircle className="h-3 w-3 mt-0.5 flex-shrink-0" />
+              <span>
+                Google Places autocomplete is not configured. Using stored property locations.
+              </span>
+            </div>
+          )}
           {showSuggestions && suggestions.length > 0 && (
             <div
               ref={dropdownRef}
@@ -167,6 +180,11 @@ export default function PropertySearchBar({ onSearch }: PropertySearchBarProps) 
                   {suggestion}
                 </button>
               ))}
+              {source === 'google' && (
+                <div className="px-4 py-2 text-xs text-muted-foreground border-t border-border">
+                  Powered by Google Places
+                </div>
+              )}
             </div>
           )}
         </div>

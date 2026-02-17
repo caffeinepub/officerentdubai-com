@@ -58,10 +58,10 @@ export enum UserRole {
 }
 export interface backendInterface {
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
-    createProperty(params: CreatePropertyParams): Promise<void>;
-    deleteProperty(propertyId: bigint): Promise<void>;
+    createPropertyWithCode(params: CreatePropertyParams, agentCode: string): Promise<void>;
+    deletePropertyWithCode(propertyId: bigint, agentCode: string): Promise<void>;
     getAllProperties(): Promise<Array<Property>>;
-    getAutocompleteSuggestions(input: string, maxResults: bigint | null): Promise<Array<string>>;
+    getBackendAutocompleteSuggestions(input: string, maxResults: bigint | null): Promise<Array<string>>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
     getPropertiesByAreaRange(minArea: bigint, maxArea: bigint): Promise<Array<Property>>;
@@ -74,5 +74,5 @@ export interface backendInterface {
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     isCallerAdmin(): Promise<boolean>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
-    updateProperty(propertyId: bigint, params: CreatePropertyParams): Promise<void>;
+    updatePropertyWithCode(propertyId: bigint, params: CreatePropertyParams, agentCode: string): Promise<void>;
 }

@@ -90,10 +90,10 @@ export const idlService = IDL.Service({
   '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
-  'createProperty' : IDL.Func([CreatePropertyParams], [], []),
-  'deleteProperty' : IDL.Func([IDL.Nat], [], []),
+  'createPropertyWithCode' : IDL.Func([CreatePropertyParams, IDL.Text], [], []),
+  'deletePropertyWithCode' : IDL.Func([IDL.Nat, IDL.Text], [], []),
   'getAllProperties' : IDL.Func([], [IDL.Vec(Property)], ['query']),
-  'getAutocompleteSuggestions' : IDL.Func(
+  'getBackendAutocompleteSuggestions' : IDL.Func(
       [IDL.Text, IDL.Opt(IDL.Nat)],
       [IDL.Vec(IDL.Text)],
       ['query'],
@@ -146,7 +146,11 @@ export const idlService = IDL.Service({
     ),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
-  'updateProperty' : IDL.Func([IDL.Nat, CreatePropertyParams], [], []),
+  'updatePropertyWithCode' : IDL.Func(
+      [IDL.Nat, CreatePropertyParams, IDL.Text],
+      [],
+      [],
+    ),
 });
 
 export const idlInitArgs = [];
@@ -234,10 +238,14 @@ export const idlFactory = ({ IDL }) => {
     '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
-    'createProperty' : IDL.Func([CreatePropertyParams], [], []),
-    'deleteProperty' : IDL.Func([IDL.Nat], [], []),
+    'createPropertyWithCode' : IDL.Func(
+        [CreatePropertyParams, IDL.Text],
+        [],
+        [],
+      ),
+    'deletePropertyWithCode' : IDL.Func([IDL.Nat, IDL.Text], [], []),
     'getAllProperties' : IDL.Func([], [IDL.Vec(Property)], ['query']),
-    'getAutocompleteSuggestions' : IDL.Func(
+    'getBackendAutocompleteSuggestions' : IDL.Func(
         [IDL.Text, IDL.Opt(IDL.Nat)],
         [IDL.Vec(IDL.Text)],
         ['query'],
@@ -290,7 +298,11 @@ export const idlFactory = ({ IDL }) => {
       ),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
-    'updateProperty' : IDL.Func([IDL.Nat, CreatePropertyParams], [], []),
+    'updatePropertyWithCode' : IDL.Func(
+        [IDL.Nat, CreatePropertyParams, IDL.Text],
+        [],
+        [],
+      ),
   });
 };
 
