@@ -7,6 +7,7 @@ import { ArrowLeft, Edit, Trash2, Plus, Loader2 } from 'lucide-react';
 import { useGetAllProperties, useDeleteProperty } from '../../hooks/useQueries';
 import { toast } from 'sonner';
 import AgentProtectedRoute from '../../components/auth/AgentProtectedRoute';
+import { normalizeBackendError } from '../../utils/backendError';
 
 function ManagePropertiesContent() {
   const { data: properties = [], isLoading } = useGetAllProperties();
@@ -17,23 +18,22 @@ function ManagePropertiesContent() {
       await deleteProperty.mutateAsync(id);
       toast.success(`Property "${title}" deleted successfully`);
     } catch (error: any) {
-      const errorMessage = error?.message || '';
+      const normalized = normalizeBackendError(error);
       
       console.error('Property deletion error:', {
-        message: errorMessage,
-        isAuthError: errorMessage.toLowerCase().includes('authorization') || 
-                     errorMessage.toLowerCase().includes('agent code'),
-        fullError: error,
+        normalizedMessage: normalized.message,
+        isAuthError: normalized.isAuthorizationError,
+        originalError: normalized.originalError,
       });
 
-      // Check for authorization errors with specific guidance
-      if (errorMessage.includes('Authorization failed') || 
-          errorMessage.includes('Invalid agent code') ||
-          errorMessage.includes('Authorization required')) {
-        toast.error('Authorization failed. Please return to /agent and enter your agent code again.');
-      } else if (errorMessage.toLowerCase().includes('unauthorized')) {
-        toast.error('Access denied. Please return to /agent and verify your agent code.');
+      // Show appropriate error message based on error type
+      if (normalized.isAuthorizationError) {
+        toast.error('Invalid agent code. Please return to /agent and enter your agent code again.');
+      } else if (normalized.message && normalized.message !== 'An unexpected error occurred') {
+        // Show the specific backend error message
+        toast.error(normalized.message);
       } else {
+        // Fallback to generic message
         toast.error('Failed to delete property');
       }
     }

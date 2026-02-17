@@ -10,9 +10,7 @@ import Storage "blob-storage/Storage";
 import MixinStorage "blob-storage/Mixin";
 import AccessControl "authorization/access-control";
 import MixinAuthorization "authorization/MixinAuthorization";
-import Migration "migration";
 
-(with migration = Migration.run)
 actor {
   let accessControlState = AccessControl.initState();
   include MixinAuthorization(accessControlState);
@@ -160,10 +158,15 @@ actor {
     };
   };
 
-  // Property Management Functions - Require authenticated user access
+  // Property Management Functions - Changed to accept agent code for authorization
+  func isAgent(code : Text) : Bool {
+    code == "050702";
+  };
+
+  // Create Property accepting agent code for authorization
   public shared ({ caller }) func createPropertyWithCode(params : CreatePropertyParams, agentCode : Text) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only authenticated users can create properties");
+    if (not isAgent(agentCode)) {
+      Runtime.trap("Unauthorized: Only agents can create properties");
     };
 
     let propertyId = nextId;
@@ -185,9 +188,10 @@ actor {
     properties.add(propertyId, property);
   };
 
+  // Update Property accepting agent code for authorization
   public shared ({ caller }) func updatePropertyWithCode(propertyId : Nat, params : CreatePropertyParams, agentCode : Text) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only authenticated users can update properties");
+    if (not isAgent(agentCode)) {
+      Runtime.trap("Unauthorized: Only agents can update properties");
     };
 
     switch (properties.get(propertyId)) {
@@ -211,9 +215,10 @@ actor {
     };
   };
 
+  // Delete Property accepting agent code for authorization
   public shared ({ caller }) func deletePropertyWithCode(propertyId : Nat, agentCode : Text) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only authenticated users can delete properties");
+    if (not isAgent(agentCode)) {
+      Runtime.trap("Unauthorized: Only agents can delete properties");
     };
 
     switch (properties.get(propertyId)) {
@@ -253,3 +258,4 @@ actor {
     locations.toArray();
   };
 };
+

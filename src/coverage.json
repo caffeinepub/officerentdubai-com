@@ -1,44 +1,48 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-17T02:17:22.352Z",
+  "generatedAt": "2026-02-17T02:28:27.647Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 1,
+    "total": 2,
     "implemented": 1,
     "items": [
       {
-        "id": "REQ-42",
-        "summary": "Update the public listings search Location autocomplete recommendations so that suggestions display and return only property location values (do not include or match against property titles).",
+        "id": "REQ-43",
+        "summary": "Fix backend authorization for property create/update/delete so Agent Arena can add and edit properties successfully using only the Agent Code (\"050702\"), without requiring Internet Identity authentication.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-44",
+        "summary": "Ensure the Agent Arena UI shows a clear English error message when property creation or editing fails, surfacing the backend’s returned reason (especially invalid agent code) instead of only a generic failure message.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/hooks/useLocationAutocompleteSuggestions.ts",
-          "frontend/src/hooks/useQueries.ts",
-          "frontend/src/components/search/PropertySearchBar.tsx"
+          "frontend/src/utils/backendError.ts",
+          "frontend/src/pages/agent/PropertyEditorPage.tsx",
+          "frontend/src/pages/agent/ManagePropertiesPage.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/hooks/useLocationAutocompleteSuggestions.ts",
-          "frontend/src/hooks/useQueries.ts"
+          "frontend/src/utils/backendError.ts",
+          "frontend/src/pages/agent/PropertyEditorPage.tsx",
+          "frontend/src/pages/agent/ManagePropertiesPage.tsx"
         ]
       }
     ]
   },
   "changedFiles": [
     "backend/main.mo",
-    "backend/migration.mo",
     "build-request.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/backend.d.ts",
-    "frontend/src/backend.ts",
-    "frontend/src/declarations/backend.did.d.ts",
-    "frontend/src/declarations/backend.did.js",
-    "frontend/src/hooks/useLocationAutocompleteSuggestions.ts",
-    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/pages/agent/ManagePropertiesPage.tsx",
+    "frontend/src/pages/agent/PropertyEditorPage.tsx",
+    "frontend/src/utils/backendError.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

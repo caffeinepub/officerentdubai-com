@@ -1,11 +1,13 @@
 # Specification
 
 ## Summary
-**Goal:** Update the public listings search Location autocomplete so it suggests and returns only location text (not property titles).
+**Goal:** Restore Agent Arena add/edit/delete property functionality by allowing authorized mutations using the Agent Code “050702” without Internet Identity, and improve UI error messaging to show the backend’s reason in English.
 
 **Planned changes:**
-- Adjust backend autocomplete logic (`getBackendAutocompleteSuggestions(input, maxResults)`) to search/match only against stored `property.location` values while preserving case-insensitive matching, de-duplication, and `maxResults` limiting.
-- Update the frontend Location autocomplete rendering/selection behavior so the dropdown displays only location strings and selecting a suggestion fills the Location input with the exact location text.
-- Update any frontend comments/docs that currently indicate the autocomplete searches property titles to reflect location-only behavior.
+- Update backend property create/update/delete authorization to accept the Agent Code (“050702”) for `createPropertyWithCode`, `updatePropertyWithCode`, and `deletePropertyWithCode` even when the caller is not authenticated.
+- Return a clear English error containing the phrase “Invalid agent code” when the agent code is missing or incorrect for create/update/delete.
+- Ensure public property browsing (`getAllProperties`, `getPropertyById`, search/filter queries) remains publicly accessible without requiring an agent code.
+- Update Agent Arena UI to surface backend-provided failure reasons in English (especially invalid/missing agent code), including guidance to return to `/agent` and re-enter the code.
+- Ensure successful add/edit flows navigate back to `/agent/properties` without showing an error.
 
-**User-visible outcome:** When typing in the Location field on public listings search, the autocomplete dropdown shows only location suggestions, and selecting one fills the input with that location text exactly.
+**User-visible outcome:** Agents can add, edit, and delete properties in Agent Arena using the Agent Code “050702” without Internet Identity login, and any failures show clear English messages explaining the reason and next steps.

@@ -1,60 +1,26 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-17T02:17:22.349Z",
-  "summary": "REQ-42 is only partially evidenced. Frontend hooks/comments were updated to describe and fetch “location-only” suggestions, but the diff summary does not provide evidence that the required backend method `getBackendAutocompleteSuggestions(input, maxResults)` was updated accordingly (or even still exists). The frontend appears to call a different backend method name (`getBackendLocationSuggestions`). UI behavior changes in the actual search component are not shown in the provided diff excerpts.",
+  "generatedAt": "2026-02-17T02:28:27.643Z",
+  "summary": "Frontend changes add normalized backend error handling and show specific English toast messages (including guidance to return to /agent and re-enter agent code) for create/update/delete failures. Backend diff snippet only shows public query functions and does not provide evidence of the required agent-code-based authorization changes for create/update/delete.",
   "missing_requirements": [
     {
-      "id": "REQ-42",
-      "requirement": "Backend method `getBackendAutocompleteSuggestions(input, maxResults)` only searches/matches against stored `property.location` values (not `property.title`) while keeping case-insensitive matching, de-duplication, and `maxResults` limiting behavior.",
-      "reason": "The diff excerpt of `backend/main.mo` is truncated before any autocomplete method implementation is shown, and the frontend now calls `getBackendLocationSuggestions` instead of the specified `getBackendAutocompleteSuggestions`, so there is no evidence the specified method was updated to location-only matching while preserving the listed behaviors.",
+      "id": "REQ-43",
+      "requirement": "Fix backend authorization for property create/update/delete so Agent Arena can add and edit properties successfully using only the Agent Code (\"050702\"), without requiring Internet Identity authentication, including rejecting missing/incorrect codes with an error containing the words \"Invalid agent code\" while keeping public browsing queries accessible.",
+      "reason": "The provided backend/main.mo diff excerpt does not show implementations or modifications for createPropertyWithCode / updatePropertyWithCode / deletePropertyWithCode, nor any explicit agent-code validation or \"Invalid agent code\" error messages for those mutations. Only public query functions for browsing are visible in the truncated snippet.",
       "evidence": [
-        "backend/main.mo (truncated; no autocomplete method shown)",
-        "frontend/src/hooks/useQueries.ts (calls `actor.getBackendLocationSuggestions(debouncedInput, null)` instead of `getBackendAutocompleteSuggestions`)"
-      ]
-    },
-    {
-      "id": "REQ-42",
-      "requirement": "Typing in the public search Location field shows autocomplete suggestions that are locations only (no property titles appear in the dropdown).",
-      "reason": "No actual diff content for the search bar component (dropdown rendering) is provided. Only hook-level changes are shown, which is insufficient to verify what is displayed in the UI dropdown.",
-      "evidence": [
-        "frontend/src/hooks/useLocationAutocompleteSuggestions.ts",
-        "frontend-file-summaries.txt (mentions PropertySearchBar behavior but does not show code changes)"
-      ]
-    },
-    {
-      "id": "REQ-42",
-      "requirement": "Selecting an autocomplete suggestion populates the Location input with that location text exactly (no title prefix/suffix).",
-      "reason": "The diff does not include the component code that handles selection and input population, so there is no direct evidence the selection behavior was updated/verified.",
-      "evidence": [
-        "frontend-file-summaries.txt (mentions PropertySearchBar but provides no diff for it)"
+        "backend/main.mo (truncated; shows public query functions like getAllProperties but no mutation/agent-code authorization logic)"
       ]
     }
   ],
-  "hallucinated_features": [
-    {
-      "description": "Introduced/used a new backend API name `getBackendLocationSuggestions` for autocomplete instead of the requested `getBackendAutocompleteSuggestions(input, maxResults)`.",
-      "reason": "The BuildRequest explicitly references `getBackendAutocompleteSuggestions(input, maxResults)`, but the diff shows the frontend calling `actor.getBackendLocationSuggestions(debouncedInput, null)`.",
-      "evidence": [
-        "frontend/src/hooks/useQueries.ts"
-      ]
-    },
-    {
-      "description": "Added a backend migration module file (`backend/migration.mo`) and wired `Migration.run` into `backend/main.mo`.",
-      "reason": "The BuildRequest did not ask for migrations or a migration module; this appears unrelated to the autocomplete display/scope change.",
-      "evidence": [
-        "backend/migration.mo",
-        "backend/main.mo (imports `Migration \"migration\"` and `(with migration = Migration.run)`)"
-      ]
-    }
-  ],
-  "confidence": 0.67,
+  "hallucinated_features": [],
+  "confidence": 0.62,
   "changed_files": [
     "backend/main.mo",
-    "backend/migration.mo",
     "frontend-file-summaries.txt",
-    "frontend/src/hooks/useLocationAutocompleteSuggestions.ts",
-    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/pages/agent/ManagePropertiesPage.tsx",
+    "frontend/src/pages/agent/PropertyEditorPage.tsx",
+    "frontend/src/utils/backendError.ts",
     "project_state.json"
   ]
 }

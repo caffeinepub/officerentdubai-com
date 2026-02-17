@@ -1,32 +1,32 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Location-only text in public search autocomplete",
+  "title": "Agent Arena: surface backend mutation errors for add/edit property",
   "requirements": [
     {
-      "id": "REQ-42",
-      "summary": "Ensure Location autocomplete suggestions display and populate location text only (no property titles).",
+      "id": "REQ-44",
+      "summary": "Improve Agent Arena add/edit property error handling to show clear English reasons from the backend (especially invalid/missing agent code) instead of generic failure toasts.",
       "acceptanceCriteria": [
-        "Typing in the public search Location field shows autocomplete suggestions that are locations only (no property titles appear in the dropdown).",
-        "Selecting an autocomplete suggestion populates the Location input with that location text exactly (no title prefix/suffix).",
-        "Backend method `getBackendAutocompleteSuggestions(input, maxResults)` only searches/matches against stored `property.location` values (not `property.title`) while keeping case-insensitive matching, de-duplication, and `maxResults` limiting behavior.",
-        "Update any frontend comments/docs that claim the autocomplete searches titles so they accurately reflect location-only behavior."
+        "When backend rejects a mutation due to an invalid/missing agent code, the UI displays an English toast/message that clearly instructs the user to return to \"/agent\" and enter the agent code again.",
+        "When backend rejects a mutation for non-authorization reasons (e.g., \"Property not found\"), the UI displays that reason in English (or a safe, readable normalized equivalent) rather than only \"Failed to create property\" / \"Failed to update property\".",
+        "The add property flow successfully creates a property and navigates back to \"/agent/properties\" without showing an error.",
+        "The edit property flow successfully updates an existing property and navigates back to \"/agent/properties\" without showing an error."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/hooks/useLocationAutocompleteSuggestions.ts",
+          "path": "frontend/src/utils/backendError.ts",
           "operation": "modify",
-          "description": "Update hook docs/comments to reflect location-only behavior (remove any mention of searching titles). Add a small client-side normalization step so the hook returns location text only (e.g., strip any title/location combined formatting if present), then de-duplicate results while preserving order."
+          "description": "Enhance backend error normalization to extract a clean, readable English reason from common canister/agent error wrappers (e.g., reject/trap prefixes), and keep robust detection of authorization/agent-code failures (\"Invalid agent code\", \"Authorization required\", \"Unauthorized\", etc.) so UI can reliably branch on authorization vs other failures."
         },
         {
-          "path": "frontend/src/hooks/useQueries.ts",
+          "path": "frontend/src/pages/agent/PropertyEditorPage.tsx",
           "operation": "modify",
-          "description": "Update the backend-autocomplete hook comment/docs to remove claims that it searches property titles and to accurately describe location-only suggestions behavior. Keep the existing debouncing and query caching behavior intact."
+          "description": "Update create/edit submit error handling to use the normalized backend reason and surface it to the user: show the explicit instruction to return to \"/agent\" and re-enter the agent code on authorization/agent-code failures, and otherwise show the normalized backend reason (falling back only if no readable reason is available) instead of generic \"Failed to create/update property\" toasts."
         },
         {
-          "path": "frontend/src/components/search/PropertySearchBar.tsx",
+          "path": "frontend/src/pages/agent/ManagePropertiesPage.tsx",
           "operation": "modify",
-          "description": "Ensure the Location autocomplete dropdown renders only the location suggestion text returned by the location-suggestions hook (no additional title/label rendering). Confirm selection writes the suggestion string into the Location input exactly as displayed."
+          "description": "Align delete error handling with the same normalized backend reason strategy used for add/edit: on invalid/missing agent code show an English toast instructing return to \"/agent\" to re-enter the agent code, otherwise display the backend-provided reason when available (to keep Agent Arena mutation failures consistently understandable)."
         }
       ]
     }

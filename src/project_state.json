@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 29,
+  "projectStateVersion": 31,
   "summary": "Build officerentdubai.com, a commercial property rental portal with a searchable/filterable listings frontend and an agent backend (\"Agent Arena\") to manage properties, including photos, with WhatsApp contact to a fixed number. Agent Arena access should be gated by an \"Agent Code\" entry (050702) instead of login/signup.",
   "architectural_notes": [
     "Project is a commercial property rental portal with separate public frontend and agent backend (\"Agent Arena\").",
@@ -17,7 +17,8 @@
     "Agent Arena backend: agents are currently unable to sign up and/or log in (authentication flow failing).",
     "WhatsApp contact CTA: prefilled WhatsApp message is not including the listing property link/details when a client requests more information (agent is not receiving the listing link in the message).",
     "Agent Arena: adding/creating properties is showing an error (property creation failing).",
-    "Public search location autocomplete: suggestions are not showing in the UI and the backend endpoint/query is not returning location suggestions (autocomplete appears broken)."
+    "Public search location autocomplete: suggestions are not showing in the UI and the backend endpoint/query is not returning location suggestions (autocomplete appears broken).",
+    "Agent Arena: editing/updating existing properties is failing (error shown when trying to edit a property)."
   ],
   "isFixRequest": true,
   "existing_features": [
@@ -270,6 +271,14 @@
         "REQ-42"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-ensure-the-agent-arena-ui-shows-a-clear-english-error-message-when-property-creation-or-editing-fails-surfacing-the-backend-s-returned-reason-especially-invalid-agent-code-instead-of-only-a-generic-failure-message",
+      "title": "Ensure the Agent Arena UI shows a clear English error message when property creation or editing fails, surfacing the backend’s returned reason (especially invalid agent code) instead of only a generic failure message.",
+      "reqIds": [
+        "REQ-44"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -391,6 +400,14 @@
       "id": "AR-33",
       "summary": "Update public search location autocomplete so recommendations include ONLY stored property.location values (no property.title/building-name suggestions); keep deduped, case-insensitive matching, and maxResults limit",
       "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-34",
+      "summary": "Fix backend authorization for property create/update/delete so Agent Arena can add and edit properties successfully using only the Agent Code (\"050702\"), without requiring Internet Identity authentication.",
+      "reqIds": [
+        "REQ-43"
+      ],
       "status": "pending"
     }
   ],
