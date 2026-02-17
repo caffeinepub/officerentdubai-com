@@ -4,18 +4,18 @@ import { Button } from '@/components/ui/button';
 
 export default function SiteHeader() {
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full border-b bg-background">
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center space-x-3">
           <img 
-            src="/assets/generated/officerentdubai-logo.dim_1200x300.png" 
+            src="/assets/generated/officerentdubai-logo-yellow.dim_1200x300.png" 
             alt="OfficeRentDubai.com" 
             className="h-8 w-auto"
           />
         </Link>
         
         <nav className="flex items-center space-x-6">
-          <Link to="/" className="text-sm font-medium transition-colors hover:text-primary">
+          <Link to="/" className="text-sm font-medium transition-colors hover:opacity-70 text-foreground">
             Properties
           </Link>
           <Link to="/agent">

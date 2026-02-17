@@ -1,13 +1,10 @@
 # Specification
 
 ## Summary
-**Goal:** Restore Agent Arena add/edit/delete property functionality by allowing authorized mutations using the Agent Code “050702” without Internet Identity, and improve UI error messaging to show the backend’s reason in English.
+**Goal:** Reduce the site theme to a softer light/pale yellow palette across the entire app.
 
 **Planned changes:**
-- Update backend property create/update/delete authorization to accept the Agent Code (“050702”) for `createPropertyWithCode`, `updatePropertyWithCode`, and `deletePropertyWithCode` even when the caller is not authenticated.
-- Return a clear English error containing the phrase “Invalid agent code” when the agent code is missing or incorrect for create/update/delete.
-- Ensure public property browsing (`getAllProperties`, `getPropertyById`, search/filter queries) remains publicly accessible without requiring an agent code.
-- Update Agent Arena UI to surface backend-provided failure reasons in English (especially invalid/missing agent code), including guidance to return to `/agent` and re-enter the code.
-- Ensure successful add/edit flows navigate back to `/agent/properties` without showing an error.
+- Update site-wide Tailwind OKLCH theme CSS variables in `frontend/src/index.css` to use a less saturated, less intense light yellow palette for `background/foreground/card/popover/primary/secondary/muted/accent/border/input/ring` and corresponding `*-foreground` tokens.
+- Ensure the updated palette applies consistently in both default and dark mode without reverting to the previous stronger yellow values.
 
-**User-visible outcome:** Agents can add, edit, and delete properties in Agent Arena using the Agent Code “050702” without Internet Identity login, and any failures show clear English messages explaining the reason and next steps.
+**User-visible outcome:** The public portal and Agent Arena display a calmer light/yellow theme with readable text and softer interactive colors (buttons/links) while keeping the same functionality and layout.

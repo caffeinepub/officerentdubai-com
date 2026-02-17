@@ -1,32 +1,22 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Agent Arena: surface backend mutation errors for add/edit property",
+  "title": "Light/pale yellow Tailwind OKLCH theme update",
   "requirements": [
     {
-      "id": "REQ-44",
-      "summary": "Improve Agent Arena add/edit property error handling to show clear English reasons from the backend (especially invalid/missing agent code) instead of generic failure toasts.",
+      "id": "REQ-1",
+      "summary": "Soften the global Tailwind OKLCH theme palette to a light/pale yellow by updating the CSS variable tokens (light + dark mode) in frontend/src/index.css.",
       "acceptanceCriteria": [
-        "When backend rejects a mutation due to an invalid/missing agent code, the UI displays an English toast/message that clearly instructs the user to return to \"/agent\" and enter the agent code again.",
-        "When backend rejects a mutation for non-authorization reasons (e.g., \"Property not found\"), the UI displays that reason in English (or a safe, readable normalized equivalent) rather than only \"Failed to create property\" / \"Failed to update property\".",
-        "The add property flow successfully creates a property and navigates back to \"/agent/properties\" without showing an error.",
-        "The edit property flow successfully updates an existing property and navigates back to \"/agent/properties\" without showing an error."
+        "The global background and surfaces (background/card/popover) render as a light/pale yellow rather than a strong saturated yellow.",
+        "Primary/secondary/accent colors are visibly softer (reduced color intensity) while maintaining clear hierarchy between surfaces and interactive elements (e.g., buttons/links).",
+        "Text remains readable with sufficient contrast against the light yellow backgrounds (foreground and *-foreground tokens are set appropriately).",
+        "The updated palette applies consistently in both default and dark mode (no reversion to the previous hard yellow values)."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/utils/backendError.ts",
+          "path": "frontend/src/index.css",
           "operation": "modify",
-          "description": "Enhance backend error normalization to extract a clean, readable English reason from common canister/agent error wrappers (e.g., reject/trap prefixes), and keep robust detection of authorization/agent-code failures (\"Invalid agent code\", \"Authorization required\", \"Unauthorized\", etc.) so UI can reliably branch on authorization vs other failures."
-        },
-        {
-          "path": "frontend/src/pages/agent/PropertyEditorPage.tsx",
-          "operation": "modify",
-          "description": "Update create/edit submit error handling to use the normalized backend reason and surface it to the user: show the explicit instruction to return to \"/agent\" and re-enter the agent code on authorization/agent-code failures, and otherwise show the normalized backend reason (falling back only if no readable reason is available) instead of generic \"Failed to create/update property\" toasts."
-        },
-        {
-          "path": "frontend/src/pages/agent/ManagePropertiesPage.tsx",
-          "operation": "modify",
-          "description": "Align delete error handling with the same normalized backend reason strategy used for add/edit: on invalid/missing agent code show an English toast instructing return to \"/agent\" to re-enter the agent code, otherwise display the backend-provided reason when available (to keep Agent Arena mutation failures consistently understandable)."
+          "description": "Adjust the OKLCH CSS variables for background/foreground/card/popover/primary/secondary/muted/accent/border/input/ring and corresponding *-foreground tokens to a less saturated, less intense light/pale yellow palette; update both :root and .dark blocks to ensure consistent theming across public portal + Agent Arena without touching any shadcn UI component files."
         }
       ]
     }
