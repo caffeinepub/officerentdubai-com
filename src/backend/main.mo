@@ -1,11 +1,11 @@
-// RealEstate Actor 0.1.1
+// RealEstate Actor 0.1.4
 import Text "mo:core/Text";
 import Map "mo:core/Map";
 import Iter "mo:core/Iter";
 import Runtime "mo:core/Runtime";
 import Principal "mo:core/Principal";
-import Order "mo:core/Order";
 import Nat "mo:core/Nat";
+import Order "mo:core/Order";
 import Storage "blob-storage/Storage";
 import MixinStorage "blob-storage/Mixin";
 import AccessControl "authorization/access-control";
@@ -17,7 +17,7 @@ actor {
 
   include MixinStorage();
 
-  let nextId = 0;
+  var nextId = 0;
 
   type PropertyType = {
     #office;
@@ -158,13 +158,14 @@ actor {
     };
   };
 
-  // Property Management Functions using Agent Code
+  // Property Management Functions - Require authenticated user access
   public shared ({ caller }) func createPropertyWithCode(params : CreatePropertyParams, agentCode : Text) : async () {
-    if (agentCode != "050702") {
-      Runtime.trap("Unauthorized: Invalid agent code");
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only authenticated users can create properties");
     };
 
     let propertyId = nextId;
+    nextId += 1;
     let property : Property = {
       id = propertyId;
       title = params.title;
@@ -183,8 +184,8 @@ actor {
   };
 
   public shared ({ caller }) func updatePropertyWithCode(propertyId : Nat, params : CreatePropertyParams, agentCode : Text) : async () {
-    if (agentCode != "050702") {
-      Runtime.trap("Unauthorized: Invalid agent code");
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only authenticated users can update properties");
     };
 
     switch (properties.get(propertyId)) {
@@ -209,8 +210,8 @@ actor {
   };
 
   public shared ({ caller }) func deletePropertyWithCode(propertyId : Nat, agentCode : Text) : async () {
-    if (agentCode != "050702") {
-      Runtime.trap("Unauthorized: Invalid agent code");
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only authenticated users can delete properties");
     };
 
     switch (properties.get(propertyId)) {
@@ -221,7 +222,6 @@ actor {
     };
   };
 
-  // Fallback Backend Autocomplete - kept for public typeahead without Google
   public query ({ caller }) func getBackendAutocompleteSuggestions(input : Text, maxResults : ?Nat) : async [Text] {
     let lowercaseInput = input.toLower();
     let max = switch (maxResults) {

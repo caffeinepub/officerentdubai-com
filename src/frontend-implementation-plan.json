@@ -1,85 +1,27 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Google Places Autocomplete for Dubai/UAE-biased location suggestions (frontend)",
+  "title": "Listing-based location autocomplete (no Google Places) for public search",
   "requirements": [
     {
-      "id": "REQ-34",
-      "summary": "Integrate Google Places Autocomplete suggestions into the public Location typeahead, restricted to UAE and biased toward Dubai.",
+      "id": "REQ-41",
+      "summary": "Replace public search Location autocomplete to use stored-property suggestions only and prevent any Google Places API loading/querying for this typeahead.",
       "acceptanceCriteria": [
-        "When a user types in the public Location input, the app fetches autocomplete suggestions from Google Places Autocomplete API using the current input value.",
-        "The request restricts results to UAE via `components=country:AE` and applies a Dubai bias (e.g., location/radius or other supported request parameters) so suggestions prioritize Dubai locations/buildings.",
-        "Suggestions are displayed in the existing typeahead dropdown and remain selectable by mouse and keyboard (ArrowUp/ArrowDown/Enter/Escape) as currently implemented.",
-        "Selecting a Google suggestion populates the Location input with the selected suggestion text.",
-        "If the Google API returns an error or no results, the UI fails gracefully without breaking search input behavior."
+        "Typing in the Location field shows an autocomplete dropdown populated from the backend stored-property suggestions (location + title) rather than Google Places suggestions.",
+        "The frontend does not attempt to load or query Google Places Autocomplete for the public search location typeahead (even if VITE_GOOGLE_PLACES_API_KEY is present).",
+        "Selecting a suggestion fills the Location input with the selected suggestion text and keeps existing mouse + keyboard selection behavior (arrow keys, enter, escape).",
+        "All user-facing text remains in English (e.g., loading state, error state, empty state, helper text)."
       ],
       "file_operations": [
-        {
-          "path": "frontend/src/utils/googlePlacesLoader.ts",
-          "operation": "create",
-          "description": "Add a small Google Maps JavaScript loader that injects the script tag at runtime using the configured API key and loads the Places library; expose a safe \"load once\" helper returning readiness/error state."
-        },
-        {
-          "path": "frontend/src/hooks/useGooglePlacesAutocomplete.ts",
-          "operation": "create",
-          "description": "Implement a debounced Google Places Autocomplete hook using the loaded Places library to produce suggestion strings; apply UAE restriction (components=country:AE) and Dubai bias parameters in requests; return suggestions plus health/error metadata."
-        },
-        {
-          "path": "frontend/src/components/search/PropertySearchBar.tsx",
-          "operation": "modify",
-          "description": "Wire the Location input to use Google-based suggestions when available, while keeping the existing dropdown rendering and keyboard/mouse selection behavior; ensure selection still sets the Location input value exactly to the chosen suggestion."
-        }
-      ]
-    },
-    {
-      "id": "REQ-35",
-      "summary": "Add a frontend configuration mechanism for the Google Places API key and provide a clear English fallback when missing.",
-      "acceptanceCriteria": [
-        "The Google Places API key is read from a frontend configuration mechanism (e.g., a build-time environment variable) rather than being hardcoded in the repository.",
-        "If the API key is not configured, the Location autocomplete does not spam failing network calls; instead it either (a) falls back to existing backend-powered suggestions (stored properties) or (b) disables autocomplete and shows a clear English message indicating autocomplete is unavailable until configured.",
-        "All user-facing text introduced for this state is in English."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/config/publicEnv.ts",
-          "operation": "create",
-          "description": "Create a centralized, typed frontend config reader for public build-time env (e.g., `import.meta.env`) that exposes `googlePlacesApiKey` without hardcoding secrets."
-        },
-        {
-          "path": "frontend/src/hooks/useGooglePlacesAutocomplete.ts",
-          "operation": "modify",
-          "description": "Use the centralized config reader to disable Google requests when the key is missing; expose a status flag that callers can use to avoid making requests and show a user-facing fallback state."
-        },
-        {
-          "path": "frontend/src/components/search/PropertySearchBar.tsx",
-          "operation": "modify",
-          "description": "When the Google key is missing, avoid triggering Google requests and show a clear English message near the Location input indicating Google autocomplete is unavailable until configured, while keeping the input usable."
-        }
-      ]
-    },
-    {
-      "id": "REQ-36",
-      "summary": "Keep backend-powered autocomplete as a safe fallback and switch between Google and backend suggestions without changing search behavior.",
-      "acceptanceCriteria": [
-        "Backend continues to provide `getAutocompleteSuggestions(input, maxResults)` based on stored properties’ `location` and `title`, deduplicated case-insensitively, and limited to the requested max results.",
-        "Frontend suggestion logic uses Google Places suggestions when configured and healthy, but can fall back to backend suggestions on missing key, errors, or request failure, without changing the existing search submission behavior.",
-        "No breaking changes are introduced to property search/filtering; clicking the Search button still applies the selected/entered Location value exactly as shown in the input."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/hooks/useQueries.ts",
-          "operation": "modify",
-          "description": "Ensure the existing backend autocomplete hook calls the available backend capability from the generated actor typings (and continues to return an empty list on errors) so it can reliably serve as a fallback suggestion source."
-        },
         {
           "path": "frontend/src/hooks/useLocationAutocompleteSuggestions.ts",
-          "operation": "create",
-          "description": "Create a small orchestration hook that prefers Google Places suggestions when configured/healthy, and falls back to backend suggestions on missing key, Google errors, or request failure; expose suggestions + source/health metadata for the UI."
+          "operation": "modify",
+          "description": "Update the orchestration hook to exclusively use the backend stored-property autocomplete (property.location + property.title) and remove/disable all Google Places logic so the hook never triggers Google script loading or Google suggestion queries for public search."
         },
         {
           "path": "frontend/src/components/search/PropertySearchBar.tsx",
           "operation": "modify",
-          "description": "Switch the Location typeahead to use the combined orchestration hook so the dropdown continues working with Google or backend suggestions interchangeably; keep Search submission behavior unchanged (uses the current input text)."
+          "description": "Adjust the Location field to use the backend-only suggestions metadata (loading/error/empty states) and update helper text to reflect stored-property suggestions only while preserving existing keyboard and mouse dropdown interactions."
         }
       ]
     }

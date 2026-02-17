@@ -1,80 +1,45 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-17T01:16:14.563Z",
+  "generatedAt": "2026-02-17T02:08:06.860Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 3,
-    "implemented": 3,
+    "total": 2,
+    "implemented": 1,
     "items": [
       {
-        "id": "REQ-34",
-        "summary": "Add Google Places Autocomplete API support to provide live location/building name suggestions for the public search Location input, restricted to UAE (components=country:AE) and biased toward Dubai, using the user’s typed input.",
+        "id": "REQ-41",
+        "summary": "Update the public search Location autocomplete to recommend locations/building names only from existing property listings (stored properties), and do not call Google Places Autocomplete so the app does not incur Google API charges.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/utils/googlePlacesLoader.ts",
-          "frontend/src/hooks/useGooglePlacesAutocomplete.ts",
-          "frontend/src/components/search/PropertySearchBar.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/utils/googlePlacesLoader.ts",
-          "frontend/src/hooks/useGooglePlacesAutocomplete.ts",
-          "frontend/src/components/search/PropertySearchBar.tsx"
-        ]
-      },
-      {
-        "id": "REQ-35",
-        "summary": "Introduce a configurable Google Places API key for the frontend (do not hardcode secrets in source). If the key is missing at runtime/build time, show a clear English fallback behavior and avoid making failing requests.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/config/publicEnv.ts",
-          "frontend/src/hooks/useGooglePlacesAutocomplete.ts",
-          "frontend/src/components/search/PropertySearchBar.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/config/publicEnv.ts",
-          "frontend/src/hooks/useGooglePlacesAutocomplete.ts",
-          "frontend/src/components/search/PropertySearchBar.tsx"
-        ]
-      },
-      {
-        "id": "REQ-36",
-        "summary": "Keep (or add) a backend-provided autocomplete fallback using the existing `getAutocompleteSuggestions(input, maxResults)` method so the public search location typeahead can still work when Google is unavailable, and ensure the frontend can switch between Google-based suggestions and backend-based suggestions safely.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/hooks/useQueries.ts",
           "frontend/src/hooks/useLocationAutocompleteSuggestions.ts",
           "frontend/src/components/search/PropertySearchBar.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/hooks/useQueries.ts",
           "frontend/src/hooks/useLocationAutocompleteSuggestions.ts",
           "frontend/src/components/search/PropertySearchBar.tsx"
         ]
+      },
+      {
+        "id": "REQ-42",
+        "summary": "Ensure the backend query for listing-based autocomplete suggestions returns a deduplicated, case-insensitive matched list derived from BOTH property.location and property.title, and respects maxResults (default 10 when null).",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
       }
     ]
   },
   "changedFiles": [
     "backend/main.mo",
     "build-request.json",
-    "caffeine.lock.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/backend.d.ts",
-    "frontend/src/backend.ts",
     "frontend/src/components/search/PropertySearchBar.tsx",
-    "frontend/src/config.ts",
-    "frontend/src/config/publicEnv.ts",
-    "frontend/src/declarations/backend.did.d.ts",
-    "frontend/src/declarations/backend.did.js",
-    "frontend/src/hooks/useGooglePlacesAutocomplete.ts",
     "frontend/src/hooks/useLocationAutocompleteSuggestions.ts",
-    "frontend/src/hooks/useQueries.ts",
-    "frontend/src/utils/googlePlacesLoader.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

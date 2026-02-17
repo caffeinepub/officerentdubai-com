@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search, AlertCircle } from 'lucide-react';
+import { Search, AlertCircle, Loader2 } from 'lucide-react';
 import { PropertyType, FurnishingStatus } from '../../backend';
 import { useLocationAutocompleteSuggestions } from '../../hooks/useLocationAutocompleteSuggestions';
 
@@ -36,8 +36,7 @@ export default function PropertySearchBar({ onSearch }: PropertySearchBarProps) 
   const {
     suggestions,
     isLoading: suggestionsLoading,
-    source,
-    isGoogleConfigured,
+    error: suggestionsError,
   } = useLocationAutocompleteSuggestions(location);
 
   const handleSearch = () => {
@@ -122,14 +121,18 @@ export default function PropertySearchBar({ onSearch }: PropertySearchBarProps) 
     };
   }, []);
 
-  // Show suggestions when there are results
+  // Show suggestions when there are results or show loading/error states
   useEffect(() => {
-    if (suggestions.length > 0 && location.trim().length > 0) {
+    if (location.trim().length > 0) {
       setShowSuggestions(true);
     } else {
       setShowSuggestions(false);
     }
-  }, [suggestions, location]);
+  }, [suggestions, location, suggestionsLoading, suggestionsError]);
+
+  // Determine what to show in the dropdown
+  const shouldShowDropdown = showSuggestions && location.trim().length > 0;
+  const hasNoResults = !suggestionsLoading && !suggestionsError && suggestions.length === 0 && location.trim().length > 0;
 
   return (
     <div className="search-container rounded-lg p-6 space-y-6">
@@ -145,70 +148,80 @@ export default function PropertySearchBar({ onSearch }: PropertySearchBarProps) 
             onChange={(e) => handleLocationChange(e.target.value)}
             onKeyDown={handleKeyDown}
             onFocus={() => {
-              if (suggestions.length > 0 && location.trim().length > 0) {
+              if (location.trim().length > 0) {
                 setShowSuggestions(true);
               }
             }}
-            autoComplete="off"
+            className="w-full"
           />
-          {!isGoogleConfigured && location.trim().length > 0 && (
-            <div className="flex items-start gap-2 mt-1 text-xs text-muted-foreground">
-              <AlertCircle className="h-3 w-3 mt-0.5 flex-shrink-0" />
-              <span>
-                Google Places autocomplete is not configured. Using stored property locations.
-              </span>
-            </div>
-          )}
-          {showSuggestions && suggestions.length > 0 && (
+          
+          {/* Autocomplete Dropdown */}
+          {shouldShowDropdown && (
             <div
               ref={dropdownRef}
               className="absolute z-50 w-full mt-1 bg-background border border-border rounded-md shadow-lg max-h-60 overflow-auto"
             >
-              {suggestions.map((suggestion, index) => (
-                <button
-                  key={index}
-                  type="button"
-                  className={`w-full text-left px-4 py-2 hover:bg-accent hover:text-accent-foreground transition-colors ${
-                    index === highlightedIndex ? 'bg-accent text-accent-foreground' : ''
-                  }`}
-                  onMouseDown={(e) => {
-                    e.preventDefault();
-                    handleSuggestionClick(suggestion);
-                  }}
-                  onMouseEnter={() => setHighlightedIndex(index)}
-                >
-                  {suggestion}
-                </button>
-              ))}
-              {source === 'google' && (
-                <div className="px-4 py-2 text-xs text-muted-foreground border-t border-border">
-                  Powered by Google Places
+              {suggestionsLoading && (
+                <div className="px-4 py-3 text-sm text-muted-foreground flex items-center gap-2">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Loading suggestions...
                 </div>
               )}
+              
+              {suggestionsError && (
+                <div className="px-4 py-3 text-sm text-destructive flex items-center gap-2">
+                  <AlertCircle className="h-4 w-4" />
+                  Could not load suggestions
+                </div>
+              )}
+              
+              {hasNoResults && (
+                <div className="px-4 py-3 text-sm text-muted-foreground">
+                  No matching locations found
+                </div>
+              )}
+              
+              {!suggestionsLoading && !suggestionsError && suggestions.length > 0 && (
+                <>
+                  {suggestions.map((suggestion, index) => (
+                    <button
+                      key={index}
+                      type="button"
+                      className={`w-full text-left px-4 py-2 text-sm hover:bg-accent transition-colors ${
+                        index === highlightedIndex ? 'bg-accent' : ''
+                      }`}
+                      onClick={() => handleSuggestionClick(suggestion)}
+                      onMouseEnter={() => setHighlightedIndex(index)}
+                    >
+                      {suggestion}
+                    </button>
+                  ))}
+                </>
+              )}
             </div>
+          )}
+
+          {/* Helper text */}
+          {location.trim().length === 0 && (
+            <p className="text-xs text-muted-foreground mt-1">
+              Suggestions from listed properties
+            </p>
           )}
         </div>
 
         {/* Property Type */}
         <div className="space-y-2">
           <Label htmlFor="propertyType">Property Type</Label>
-          <Select value={propertyType} onValueChange={(value) => setPropertyType(value as PropertyType)}>
+          <Select
+            value={propertyType}
+            onValueChange={(value) => setPropertyType(value as PropertyType)}
+          >
             <SelectTrigger id="propertyType">
               <SelectValue placeholder="Select type" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value={PropertyType.office}>
-                <div className="flex items-center gap-2">
-                  <img src="/assets/generated/icon-office.dim_256x256.png" alt="" className="h-4 w-4" />
-                  Office
-                </div>
-              </SelectItem>
-              <SelectItem value={PropertyType.retail}>
-                <div className="flex items-center gap-2">
-                  <img src="/assets/generated/icon-retail.dim_256x256.png" alt="" className="h-4 w-4" />
-                  Retail
-                </div>
-              </SelectItem>
+              <SelectItem value="office">Office</SelectItem>
+              <SelectItem value="retail">Retail</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -216,60 +229,74 @@ export default function PropertySearchBar({ onSearch }: PropertySearchBarProps) 
         {/* Furnishing Status */}
         <div className="space-y-2">
           <Label htmlFor="furnishingStatus">Furnishing Status</Label>
-          <Select value={furnishingStatus} onValueChange={(value) => setFurnishingStatus(value as FurnishingStatus)}>
+          <Select
+            value={furnishingStatus}
+            onValueChange={(value) => setFurnishingStatus(value as FurnishingStatus)}
+          >
             <SelectTrigger id="furnishingStatus">
               <SelectValue placeholder="Select status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value={FurnishingStatus.furnished}>Furnished</SelectItem>
-              <SelectItem value={FurnishingStatus.semiFurnished}>Semi-Furnished</SelectItem>
-              <SelectItem value={FurnishingStatus.unfurnished}>Unfurnished</SelectItem>
+              <SelectItem value="furnished">Furnished</SelectItem>
+              <SelectItem value="semiFurnished">Semi-Furnished</SelectItem>
+              <SelectItem value="unfurnished">Unfurnished</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
-        {/* Area Range */}
+        {/* Min Area */}
         <div className="space-y-2">
-          <Label>Area (SQFT)</Label>
-          <div className="flex gap-2">
-            <Input
-              placeholder="Min"
-              type="number"
-              value={minArea}
-              onChange={(e) => setMinArea(e.target.value)}
-            />
-            <Input
-              placeholder="Max"
-              type="number"
-              value={maxArea}
-              onChange={(e) => setMaxArea(e.target.value)}
-            />
-          </div>
+          <Label htmlFor="minArea">Min Area (sq ft)</Label>
+          <Input
+            id="minArea"
+            type="number"
+            placeholder="e.g., 500"
+            value={minArea}
+            onChange={(e) => setMinArea(e.target.value)}
+          />
         </div>
 
-        {/* Price Range */}
+        {/* Max Area */}
         <div className="space-y-2">
-          <Label>Price (AED)</Label>
-          <div className="flex gap-2">
-            <Input
-              placeholder="Min"
-              type="number"
-              value={minPrice}
-              onChange={(e) => setMinPrice(e.target.value)}
-            />
-            <Input
-              placeholder="Max"
-              type="number"
-              value={maxPrice}
-              onChange={(e) => setMaxPrice(e.target.value)}
-            />
-          </div>
+          <Label htmlFor="maxArea">Max Area (sq ft)</Label>
+          <Input
+            id="maxArea"
+            type="number"
+            placeholder="e.g., 2000"
+            value={maxArea}
+            onChange={(e) => setMaxArea(e.target.value)}
+          />
+        </div>
+
+        {/* Min Price */}
+        <div className="space-y-2">
+          <Label htmlFor="minPrice">Min Price (AED)</Label>
+          <Input
+            id="minPrice"
+            type="number"
+            placeholder="e.g., 50000"
+            value={minPrice}
+            onChange={(e) => setMinPrice(e.target.value)}
+          />
+        </div>
+
+        {/* Max Price */}
+        <div className="space-y-2">
+          <Label htmlFor="maxPrice">Max Price (AED)</Label>
+          <Input
+            id="maxPrice"
+            type="number"
+            placeholder="e.g., 200000"
+            value={maxPrice}
+            onChange={(e) => setMaxPrice(e.target.value)}
+          />
         </div>
       </div>
 
+      {/* Search Button */}
       <div className="flex justify-center">
-        <Button onClick={handleSearch} size="lg" className="gap-2 px-8">
-          <Search className="h-5 w-5" />
+        <Button onClick={handleSearch} size="lg" className="min-w-[200px]">
+          <Search className="mr-2 h-5 w-5" />
           Search Properties
         </Button>
       </div>

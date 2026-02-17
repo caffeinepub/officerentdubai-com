@@ -2,12 +2,11 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-add-google-places-autocomplete-api-support-to-provide-live-location-building-name-suggestions-for-the-public-search-location-input-restricted-to-uae-components-country-ae-and-biased-toward-dubai-using-the-user-s-typed-input",
-      "featureTitle": "Add Google Places Autocomplete API support to provide live location/building name suggestions for the public search Location input, restricted to UAE (components=country:AE) and biased toward Dubai, using the user’s typed input.",
+      "featureId": "feature-update-the-public-search-location-autocomplete-to-recommend-locations-building-names-only-from-existing-property-listings-stored-properties-and-do-not-call-google-places-autocomplete-so-the-app-does-not-incur-google-api-charges",
+      "featureTitle": "Update the public search Location autocomplete to recommend locations/building names only from existing property listings (stored properties), and do not call Google Places Autocomplete so the app does not incur Google API charges.",
       "files": [
         "frontend/src/components/search/PropertySearchBar.tsx",
-        "frontend/src/hooks/useGooglePlacesAutocomplete.ts",
-        "frontend/src/utils/googlePlacesLoader.ts"
+        "frontend/src/hooks/useLocationAutocompleteSuggestions.ts"
       ],
       "components": [
         "authorization@4.0.0",
@@ -19,51 +18,7 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-34"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-introduce-a-configurable-google-places-api-key-for-the-frontend-do-not-hardcode-secrets-in-source-if-the-key-is-missing-at-runtime-build-time-show-a-clear-english-fallback-behavior-and-avoid-making-failing-requests",
-      "featureTitle": "Introduce a configurable Google Places API key for the frontend (do not hardcode secrets in source). If the key is missing at runtime/build time, show a clear English fallback behavior and avoid making failing requests.",
-      "files": [
-        "frontend/src/components/search/PropertySearchBar.tsx",
-        "frontend/src/config/publicEnv.ts",
-        "frontend/src/hooks/useGooglePlacesAutocomplete.ts"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "blob-storage@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-35"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-keep-or-add-a-backend-provided-autocomplete-fallback-using-the-existing-getautocompletesuggestions-input-maxresults-method-so-the-public-search-location-typeahead-can-still-work-when-google-is-unavailable-and-ensure-the-frontend-can-switch-between-google-based-suggestions-and-backend-based-suggestions-safely",
-      "featureTitle": "Keep (or add) a backend-provided autocomplete fallback using the existing `getAutocompleteSuggestions(input, maxResults)` method so the public search location typeahead can still work when Google is unavailable, and ensure the frontend can switch between Google-based suggestions and backend-based suggestions safely.",
-      "files": [
-        "frontend/src/components/search/PropertySearchBar.tsx",
-        "frontend/src/hooks/useLocationAutocompleteSuggestions.ts",
-        "frontend/src/hooks/useQueries.ts"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "blob-storage@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-36"
+        "REQ-41"
       ],
       "confidence": "high"
     }

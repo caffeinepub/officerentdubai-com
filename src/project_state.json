@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 23,
+  "projectStateVersion": 27,
   "summary": "Build officerentdubai.com, a commercial property rental portal with a searchable/filterable listings frontend and an agent backend (\"Agent Arena\") to manage properties, including photos, with WhatsApp contact to a fixed number. Agent Arena access should be gated by an \"Agent Code\" entry (050702) instead of login/signup.",
   "architectural_notes": [
     "Project is a commercial property rental portal with separate public frontend and agent backend (\"Agent Arena\").",
@@ -9,14 +9,16 @@
     "Google Search Console verification file provided: serve /googlea70a8e0aae5c8967.html at site root with content exactly: \"google-site-verification: googlea70a8e0aae5c8967.html\" (ensure SPA routing does not intercept).",
     "Extend property/listing schema to include furnishingStatus (Furnished/Semi-Furnished/Unfurnished), washrooms (number), and permitNumber (string) and persist these fields in Agent Arena backend + expose in public queries.",
     "WhatsApp contact deep-link should prefill a message that includes the listing title (still always targeting +971 553723617).",
-    "Location/building suggestions should be powered by Google Places Autocomplete API (restricted to UAE/Dubai as appropriate); Google does not provide a downloadable full list of Dubai buildings."
+    "Location/building suggestions should be powered by Google Places Autocomplete API (restricted to UAE/Dubai as appropriate); Google does not provide a downloadable full list of Dubai buildings.",
+    "Do not use Google Places Autocomplete due to API/billing cost; implement location/building autocomplete suggestions based on locations/titles already present in stored listings."
   ],
   "known_issues": [
     "Agent Arena backend: agents are currently unable to sign up and/or log in (authentication flow failing).",
     "WhatsApp contact CTA: prefilled WhatsApp message is not including the listing property link/details when a client requests more information (agent is not receiving the listing link in the message).",
-    "Agent Arena: adding/creating properties is showing an error (property creation failing)."
+    "Agent Arena: adding/creating properties is showing an error (property creation failing).",
+    "Public search location autocomplete: suggestions are not showing in the UI and the backend endpoint/query is not returning location suggestions (autocomplete appears broken)."
   ],
-  "isFixRequest": false,
+  "isFixRequest": true,
   "existing_features": [
     {
       "id": "feature-create-the-public-frontend-for-officerrentdubai-com-with-a-listings-search-section-that-includes-1-a-location-text-search-bar-2-a-commercial-type-filter-with-exactly-two-options-office-and-retail-3-an-area-sqft-filter-4-a-price-filter-and-5-a-search-action-button-that-applies-the-entered-filters-to-the-listings-results",
@@ -235,6 +237,30 @@
         "REQ-36"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-fix-the-backend-autocomplete-fallback-call-so-the-frontend-successfully-receives-suggestions-from-the-motoko-canister-when-google-places-is-not-configured-or-not-ready",
+      "title": "Fix the backend autocomplete fallback call so the frontend successfully receives suggestions from the Motoko canister when Google Places is not configured or not ready.",
+      "reqIds": [
+        "REQ-37"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-improve-the-location-autocomplete-ux-diagnostics-in-the-public-search-bar-so-users-are-not-left-with-a-confusing-empty-dropdown-state-when-suggestions-fail-to-load",
+      "title": "Improve the Location autocomplete UX diagnostics in the public search bar so users are not left with a confusing empty dropdown/state when suggestions fail to load.",
+      "reqIds": [
+        "REQ-38"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-public-search-location-autocomplete-to-recommend-locations-building-names-only-from-existing-property-listings-stored-properties-and-do-not-call-google-places-autocomplete-so-the-app-does-not-incur-google-api-charges",
+      "title": "Update the public search Location autocomplete to recommend locations/building names only from existing property listings (stored properties), and do not call Google Places Autocomplete so the app does not incur Google API charges.",
+      "reqIds": [
+        "REQ-41"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -353,9 +379,27 @@
       "status": "pending"
     },
     {
-      "id": "AR-26",
-      "summary": "Integrate Google Places Autocomplete API to provide live Dubai/UAE location + building name suggestions in the public search Location bar (and corresponding backend support if needed), instead of relying only on stored property data.",
-      "reqIds": [],
+      "id": "AR-29",
+      "summary": "Fix backend property ID generation so newly created properties do not overwrite each other, ensuring backend-stored autocomplete suggestions can grow as properties are added.",
+      "reqIds": [
+        "REQ-39"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-30",
+      "summary": "Ensure the backend autocomplete query behavior is robust and matches the intended feature: suggestions must be deduplicated case-insensitively, matched case-insensitively against both property.location and property.title, and limited by the provided maxResults (default to 10 when null).",
+      "reqIds": [
+        "REQ-40"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-32",
+      "summary": "Ensure the backend query for listing-based autocomplete suggestions returns a deduplicated, case-insensitive matched list derived from BOTH property.location and property.title, and respects maxResults (default 10 when null).",
+      "reqIds": [
+        "REQ-42"
+      ],
       "status": "pending"
     }
   ],

@@ -66,12 +66,20 @@ export function useBackendAutocompleteSuggestions(input: string) {
   return useQuery<string[]>({
     queryKey: ['autocomplete', 'backend', debouncedInput],
     queryFn: async () => {
-      if (!actor) return [];
+      if (!actor) throw new Error('Actor not available');
+      
       try {
-        return await actor.getBackendAutocompleteSuggestions(debouncedInput, BigInt(10));
+        // Pass null for maxResults to use backend default (10)
+        const results = await actor.getBackendAutocompleteSuggestions(debouncedInput, null);
+        return results;
       } catch (error) {
-        console.error('Backend autocomplete error:', error);
-        return [];
+        const normalized = normalizeBackendError(error);
+        console.error('Backend autocomplete error:', {
+          message: normalized.message,
+          input: debouncedInput,
+          original: normalized.originalError,
+        });
+        throw error;
       }
     },
     enabled: !!actor && !actorFetching && debouncedInput.trim().length > 0,
@@ -236,6 +244,7 @@ export function useCreateProperty() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['properties'] });
+      queryClient.invalidateQueries({ queryKey: ['autocomplete'] });
     },
   });
 }
@@ -300,6 +309,7 @@ export function useUpdateProperty() {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['properties'] });
       queryClient.invalidateQueries({ queryKey: ['property', variables.propertyId.toString()] });
+      queryClient.invalidateQueries({ queryKey: ['autocomplete'] });
     },
   });
 }
@@ -339,6 +349,7 @@ export function useDeleteProperty() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['properties'] });
+      queryClient.invalidateQueries({ queryKey: ['autocomplete'] });
     },
   });
 }
