@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 27,
+  "projectStateVersion": 29,
   "summary": "Build officerentdubai.com, a commercial property rental portal with a searchable/filterable listings frontend and an agent backend (\"Agent Arena\") to manage properties, including photos, with WhatsApp contact to a fixed number. Agent Arena access should be gated by an \"Agent Code\" entry (050702) instead of login/signup.",
   "architectural_notes": [
     "Project is a commercial property rental portal with separate public frontend and agent backend (\"Agent Arena\").",
@@ -10,7 +10,8 @@
     "Extend property/listing schema to include furnishingStatus (Furnished/Semi-Furnished/Unfurnished), washrooms (number), and permitNumber (string) and persist these fields in Agent Arena backend + expose in public queries.",
     "WhatsApp contact deep-link should prefill a message that includes the listing title (still always targeting +971 553723617).",
     "Location/building suggestions should be powered by Google Places Autocomplete API (restricted to UAE/Dubai as appropriate); Google does not provide a downloadable full list of Dubai buildings.",
-    "Do not use Google Places Autocomplete due to API/billing cost; implement location/building autocomplete suggestions based on locations/titles already present in stored listings."
+    "Do not use Google Places Autocomplete due to API/billing cost; implement location/building autocomplete suggestions based on locations/titles already present in stored listings.",
+    "Public search location autocomplete suggestions must be derived ONLY from existing stored property.location values (do not include property.title in recommendations)."
   ],
   "known_issues": [
     "Agent Arena backend: agents are currently unable to sign up and/or log in (authentication flow failing).",
@@ -261,6 +262,14 @@
         "REQ-41"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-update-the-public-listings-search-location-autocomplete-recommendations-so-that-suggestions-display-and-return-only-property-location-values-do-not-include-or-match-against-property-titles",
+      "title": "Update the public listings search Location autocomplete recommendations so that suggestions display and return only property location values (do not include or match against property titles).",
+      "reqIds": [
+        "REQ-42"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -331,14 +340,6 @@
       "status": "pending"
     },
     {
-      "id": "AR-19",
-      "summary": "Add a new public backend query that returns autocomplete suggestions for the public search Location input, based on existing stored properties. Suggestions must include both (a) property.location values and (b) property.title values (to cover building names), deduplicated, case-insensitive matched by the user’s typed text, and returned as a short list suitable for typeahead.",
-      "reqIds": [
-        "REQ-22"
-      ],
-      "status": "pending"
-    },
-    {
       "id": "AR-20",
       "summary": "Frontend: add Furnishing Status filter with options Furnished / Semi-Furnished / Unfurnished in public listings search",
       "reqIds": [],
@@ -387,19 +388,9 @@
       "status": "pending"
     },
     {
-      "id": "AR-30",
-      "summary": "Ensure the backend autocomplete query behavior is robust and matches the intended feature: suggestions must be deduplicated case-insensitively, matched case-insensitively against both property.location and property.title, and limited by the provided maxResults (default to 10 when null).",
-      "reqIds": [
-        "REQ-40"
-      ],
-      "status": "pending"
-    },
-    {
-      "id": "AR-32",
-      "summary": "Ensure the backend query for listing-based autocomplete suggestions returns a deduplicated, case-insensitive matched list derived from BOTH property.location and property.title, and respects maxResults (default 10 when null).",
-      "reqIds": [
-        "REQ-42"
-      ],
+      "id": "AR-33",
+      "summary": "Update public search location autocomplete so recommendations include ONLY stored property.location values (no property.title/building-name suggestions); keep deduped, case-insensitive matching, and maxResults limit",
+      "reqIds": [],
       "status": "pending"
     }
   ],

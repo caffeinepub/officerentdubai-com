@@ -1,4 +1,4 @@
-// RealEstate Actor 0.1.4
+// RealEstate Actor 0.1.5 (with Backend-only Location Suggestions)
 import Text "mo:core/Text";
 import Map "mo:core/Map";
 import Iter "mo:core/Iter";
@@ -10,7 +10,9 @@ import Storage "blob-storage/Storage";
 import MixinStorage "blob-storage/Mixin";
 import AccessControl "authorization/access-control";
 import MixinAuthorization "authorization/MixinAuthorization";
+import Migration "migration";
 
+(with migration = Migration.run)
 actor {
   let accessControlState = AccessControl.initState();
   include MixinAuthorization(accessControlState);
@@ -222,38 +224,32 @@ actor {
     };
   };
 
-  public query ({ caller }) func getBackendAutocompleteSuggestions(input : Text, maxResults : ?Nat) : async [Text] {
+  // Updated search suggestions to return properties' location values only
+  public query ({ caller }) func getBackendLocationSuggestions(input : Text, maxResults : ?Nat) : async [Text] {
     let lowercaseInput = input.toLower();
     let max = switch (maxResults) {
       case (?value) { value };
       case (null) { 10 };
     };
 
-    // Collect all values and filter by input match
-    let filtered = properties.values().flatMap(func(property) {
-      let values = [property.location, property.title];
-      values.values().filter(
-        func(value) {
-          value.toLower().contains(#text lowercaseInput);
-        }
-      );
-    });
-
-    // Remove duplicates and limit results
+    // Collect unique location values only and filter by input match (now without title inclusion)
     let seen = Map.empty<Text, ()>();
-    let results = filtered.filter(
-      func(value) {
-        let lowercaseValue = value.toLower();
-        switch (seen.get(lowercaseValue)) {
+    let filtered = properties.values().filter(
+      func(p) {
+        let lowercaseLocation = p.location.toLower();
+        switch (seen.get(lowercaseLocation)) {
           case (null) {
-            seen.add(lowercaseValue, ());
-            true;
+            seen.add(lowercaseLocation, ());
+            p.location.toLower().contains(#text lowercaseInput);
           };
           case (?_) { false };
         };
       }
-    ).take(max);
+    );
 
-    results.toArray();
+    // Limit results to max count
+    let limited = filtered.take(max);
+    let locations = limited.map(func(p) { p.location });
+    locations.toArray();
   };
 };

@@ -61,7 +61,7 @@ export interface backendInterface {
     createPropertyWithCode(params: CreatePropertyParams, agentCode: string): Promise<void>;
     deletePropertyWithCode(propertyId: bigint, agentCode: string): Promise<void>;
     getAllProperties(): Promise<Array<Property>>;
-    getBackendAutocompleteSuggestions(input: string, maxResults: bigint | null): Promise<Array<string>>;
+    getBackendLocationSuggestions(input: string, maxResults: bigint | null): Promise<Array<string>>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
     getPropertiesByAreaRange(minArea: bigint, maxArea: bigint): Promise<Array<Property>>;

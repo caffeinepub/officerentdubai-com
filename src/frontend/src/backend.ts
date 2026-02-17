@@ -154,7 +154,7 @@ export interface backendInterface {
     createPropertyWithCode(params: CreatePropertyParams, agentCode: string): Promise<void>;
     deletePropertyWithCode(propertyId: bigint, agentCode: string): Promise<void>;
     getAllProperties(): Promise<Array<Property>>;
-    getBackendAutocompleteSuggestions(input: string, maxResults: bigint | null): Promise<Array<string>>;
+    getBackendLocationSuggestions(input: string, maxResults: bigint | null): Promise<Array<string>>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
     getPropertiesByAreaRange(minArea: bigint, maxArea: bigint): Promise<Array<Property>>;
@@ -326,17 +326,17 @@ export class Backend implements backendInterface {
             return from_candid_vec_n18(this._uploadFile, this._downloadFile, result);
         }
     }
-    async getBackendAutocompleteSuggestions(arg0: string, arg1: bigint | null): Promise<Array<string>> {
+    async getBackendLocationSuggestions(arg0: string, arg1: bigint | null): Promise<Array<string>> {
         if (this.processError) {
             try {
-                const result = await this.actor.getBackendAutocompleteSuggestions(arg0, to_candid_opt_n27(this._uploadFile, this._downloadFile, arg1));
+                const result = await this.actor.getBackendLocationSuggestions(arg0, to_candid_opt_n27(this._uploadFile, this._downloadFile, arg1));
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.getBackendAutocompleteSuggestions(arg0, to_candid_opt_n27(this._uploadFile, this._downloadFile, arg1));
+            const result = await this.actor.getBackendLocationSuggestions(arg0, to_candid_opt_n27(this._uploadFile, this._downloadFile, arg1));
             return result;
         }
     }

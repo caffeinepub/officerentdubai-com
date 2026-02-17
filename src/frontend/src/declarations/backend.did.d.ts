@@ -80,7 +80,7 @@ export interface _SERVICE {
   >,
   'deletePropertyWithCode' : ActorMethod<[bigint, string], undefined>,
   'getAllProperties' : ActorMethod<[], Array<Property>>,
-  'getBackendAutocompleteSuggestions' : ActorMethod<
+  'getBackendLocationSuggestions' : ActorMethod<
     [string, [] | [bigint]],
     Array<string>
   >,

@@ -2,11 +2,11 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-update-the-public-search-location-autocomplete-to-recommend-locations-building-names-only-from-existing-property-listings-stored-properties-and-do-not-call-google-places-autocomplete-so-the-app-does-not-incur-google-api-charges",
-      "featureTitle": "Update the public search Location autocomplete to recommend locations/building names only from existing property listings (stored properties), and do not call Google Places Autocomplete so the app does not incur Google API charges.",
+      "featureId": "feature-update-the-public-listings-search-location-autocomplete-recommendations-so-that-suggestions-display-and-return-only-property-location-values-do-not-include-or-match-against-property-titles",
+      "featureTitle": "Update the public listings search Location autocomplete recommendations so that suggestions display and return only property location values (do not include or match against property titles).",
       "files": [
-        "frontend/src/components/search/PropertySearchBar.tsx",
-        "frontend/src/hooks/useLocationAutocompleteSuggestions.ts"
+        "frontend/src/hooks/useLocationAutocompleteSuggestions.ts",
+        "frontend/src/hooks/useQueries.ts"
       ],
       "components": [
         "authorization@4.0.0",
@@ -18,7 +18,7 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-41"
+        "REQ-42"
       ],
       "confidence": "high"
     }

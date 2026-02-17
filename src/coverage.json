@@ -1,45 +1,44 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-17T02:08:06.860Z",
+  "generatedAt": "2026-02-17T02:17:22.352Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 2,
+    "total": 1,
     "implemented": 1,
     "items": [
       {
-        "id": "REQ-41",
-        "summary": "Update the public search Location autocomplete to recommend locations/building names only from existing property listings (stored properties), and do not call Google Places Autocomplete so the app does not incur Google API charges.",
+        "id": "REQ-42",
+        "summary": "Update the public listings search Location autocomplete recommendations so that suggestions display and return only property location values (do not include or match against property titles).",
         "status": "implemented",
         "plannedFiles": [
           "frontend/src/hooks/useLocationAutocompleteSuggestions.ts",
+          "frontend/src/hooks/useQueries.ts",
           "frontend/src/components/search/PropertySearchBar.tsx"
         ],
         "matchedFiles": [
           "frontend/src/hooks/useLocationAutocompleteSuggestions.ts",
-          "frontend/src/components/search/PropertySearchBar.tsx"
+          "frontend/src/hooks/useQueries.ts"
         ]
-      },
-      {
-        "id": "REQ-42",
-        "summary": "Ensure the backend query for listing-based autocomplete suggestions returns a deduplicated, case-insensitive matched list derived from BOTH property.location and property.title, and respects maxResults (default 10 when null).",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
       }
     ]
   },
   "changedFiles": [
     "backend/main.mo",
+    "backend/migration.mo",
     "build-request.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/components/search/PropertySearchBar.tsx",
+    "frontend/src/backend.d.ts",
+    "frontend/src/backend.ts",
+    "frontend/src/declarations/backend.did.d.ts",
+    "frontend/src/declarations/backend.did.js",
     "frontend/src/hooks/useLocationAutocompleteSuggestions.ts",
+    "frontend/src/hooks/useQueries.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

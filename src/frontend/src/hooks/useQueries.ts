@@ -56,8 +56,8 @@ export function useGetCallerUserRole() {
 }
 
 /**
- * Backend autocomplete suggestions hook (fallback for when Google Places is not configured).
- * Fetches suggestions from stored properties' location and title fields.
+ * Backend location autocomplete suggestions hook.
+ * Fetches location-only suggestions from stored properties (does not search titles).
  */
 export function useBackendAutocompleteSuggestions(input: string) {
   const { actor, isFetching: actorFetching } = useActor();
@@ -70,7 +70,7 @@ export function useBackendAutocompleteSuggestions(input: string) {
       
       try {
         // Pass null for maxResults to use backend default (10)
-        const results = await actor.getBackendAutocompleteSuggestions(debouncedInput, null);
+        const results = await actor.getBackendLocationSuggestions(debouncedInput, null);
         return results;
       } catch (error) {
         const normalized = normalizeBackendError(error);

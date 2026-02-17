@@ -93,7 +93,7 @@ export const idlService = IDL.Service({
   'createPropertyWithCode' : IDL.Func([CreatePropertyParams, IDL.Text], [], []),
   'deletePropertyWithCode' : IDL.Func([IDL.Nat, IDL.Text], [], []),
   'getAllProperties' : IDL.Func([], [IDL.Vec(Property)], ['query']),
-  'getBackendAutocompleteSuggestions' : IDL.Func(
+  'getBackendLocationSuggestions' : IDL.Func(
       [IDL.Text, IDL.Opt(IDL.Nat)],
       [IDL.Vec(IDL.Text)],
       ['query'],
@@ -245,7 +245,7 @@ export const idlFactory = ({ IDL }) => {
       ),
     'deletePropertyWithCode' : IDL.Func([IDL.Nat, IDL.Text], [], []),
     'getAllProperties' : IDL.Func([], [IDL.Vec(Property)], ['query']),
-    'getBackendAutocompleteSuggestions' : IDL.Func(
+    'getBackendLocationSuggestions' : IDL.Func(
         [IDL.Text, IDL.Opt(IDL.Nat)],
         [IDL.Vec(IDL.Text)],
         ['query'],

@@ -1,27 +1,32 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Listing-based location autocomplete (no Google Places) for public search",
+  "title": "Location-only text in public search autocomplete",
   "requirements": [
     {
-      "id": "REQ-41",
-      "summary": "Replace public search Location autocomplete to use stored-property suggestions only and prevent any Google Places API loading/querying for this typeahead.",
+      "id": "REQ-42",
+      "summary": "Ensure Location autocomplete suggestions display and populate location text only (no property titles).",
       "acceptanceCriteria": [
-        "Typing in the Location field shows an autocomplete dropdown populated from the backend stored-property suggestions (location + title) rather than Google Places suggestions.",
-        "The frontend does not attempt to load or query Google Places Autocomplete for the public search location typeahead (even if VITE_GOOGLE_PLACES_API_KEY is present).",
-        "Selecting a suggestion fills the Location input with the selected suggestion text and keeps existing mouse + keyboard selection behavior (arrow keys, enter, escape).",
-        "All user-facing text remains in English (e.g., loading state, error state, empty state, helper text)."
+        "Typing in the public search Location field shows autocomplete suggestions that are locations only (no property titles appear in the dropdown).",
+        "Selecting an autocomplete suggestion populates the Location input with that location text exactly (no title prefix/suffix).",
+        "Backend method `getBackendAutocompleteSuggestions(input, maxResults)` only searches/matches against stored `property.location` values (not `property.title`) while keeping case-insensitive matching, de-duplication, and `maxResults` limiting behavior.",
+        "Update any frontend comments/docs that claim the autocomplete searches titles so they accurately reflect location-only behavior."
       ],
       "file_operations": [
         {
           "path": "frontend/src/hooks/useLocationAutocompleteSuggestions.ts",
           "operation": "modify",
-          "description": "Update the orchestration hook to exclusively use the backend stored-property autocomplete (property.location + property.title) and remove/disable all Google Places logic so the hook never triggers Google script loading or Google suggestion queries for public search."
+          "description": "Update hook docs/comments to reflect location-only behavior (remove any mention of searching titles). Add a small client-side normalization step so the hook returns location text only (e.g., strip any title/location combined formatting if present), then de-duplicate results while preserving order."
+        },
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Update the backend-autocomplete hook comment/docs to remove claims that it searches property titles and to accurately describe location-only suggestions behavior. Keep the existing debouncing and query caching behavior intact."
         },
         {
           "path": "frontend/src/components/search/PropertySearchBar.tsx",
           "operation": "modify",
-          "description": "Adjust the Location field to use the backend-only suggestions metadata (loading/error/empty states) and update helper text to reflect stored-property suggestions only while preserving existing keyboard and mouse dropdown interactions."
+          "description": "Ensure the Location autocomplete dropdown renders only the location suggestion text returned by the location-suggestions hook (no additional title/label rendering). Confirm selection writes the suggestion string into the Location input exactly as displayed."
         }
       ]
     }

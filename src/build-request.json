@@ -1,69 +1,41 @@
 {
   "kind": "build_request",
-  "title": "Use listing-based location recommendations instead of paid Google Places autocomplete",
-  "projectName": "OfficerRentDubai",
+  "title": "Show only location text in search autocomplete recommendations",
+  "projectName": "Officer Rent Dubai",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-41",
-      "text": "Update the public search Location autocomplete to recommend locations/building names only from existing property listings (stored properties), and do not call Google Places Autocomplete so the app does not incur Google API charges.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-4"
-        ],
-        "quotes": [
-          "getting api is charging do one thing recommend locations on search that location written listings"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Typing in the Location field shows an autocomplete dropdown populated from the backend stored-property suggestions (location + title) rather than Google Places suggestions.",
-        "The frontend does not attempt to load or query Google Places Autocomplete for the public search location typeahead (even if VITE_GOOGLE_PLACES_API_KEY is present).",
-        "Selecting a suggestion fills the Location input with the selected suggestion text and keeps existing mouse + keyboard selection behavior (arrow keys, enter, escape).",
-        "All user-facing text remains in English (e.g., loading state, error state, empty state, helper text)."
-      ]
-    },
-    {
       "id": "REQ-42",
-      "text": "Ensure the backend query for listing-based autocomplete suggestions returns a deduplicated, case-insensitive matched list derived from BOTH property.location and property.title, and respects maxResults (default 10 when null).",
-      "target": "backend",
+      "text": "Update the public listings search Location autocomplete recommendations so that suggestions display and return only property location values (do not include or match against property titles).",
+      "target": "both",
       "source": {
         "messageIds": [
-          "msg-4"
+          "msg-5"
         ],
         "quotes": [
-          "recommend locations on search that location written listings"
+          "proprty title also showing in recommandation . we dont need that only the location is enough"
         ]
       },
       "acceptanceCriteria": [
-        "Calling getBackendAutocompleteSuggestions(input, null) returns up to 10 suggestions matched case-insensitively against both property.location and property.title values.",
-        "Returned suggestions are deduplicated case-insensitively (e.g., \"Downtown Dubai\" and \"downtown dubai\" are not both returned).",
-        "The autocomplete query is publicly accessible (does not require agent code or authentication) and does not trap for unauthenticated callers."
+        "Typing in the public search Location field shows autocomplete suggestions that are locations only (no property titles appear in the dropdown).",
+        "Selecting an autocomplete suggestion populates the Location input with that location text exactly (no title prefix/suffix).",
+        "Backend method `getBackendAutocompleteSuggestions(input, maxResults)` only searches/matches against stored `property.location` values (not `property.title`) while keeping case-insensitive matching, de-duplication, and `maxResults` limiting behavior.",
+        "Update any frontend comments/docs that claim the autocomplete searches titles so they accurately reflect location-only behavior."
       ]
     }
   ],
   "constraints": [
-    "Backend must remain a single Motoko actor in backend/main.mo; only introduce backend/migration.mo if a state upgrade is required.",
-    "Do not edit files in frontend immutablePaths (compose existing components/hooks instead).",
-    "Do not use Google Places Autocomplete for the public search typeahead (avoid paid API usage).",
-    "All user-facing text must be in English."
+    "Keep the backend as a single Motoko actor in backend/main.mo (do not add additional backend services).",
+    "Do not edit files under frontend/src/components/ui or any frontend immutable paths listed in SYSTEM_CONTEXT.",
+    "Use English for any user-facing text."
   ],
   "nonGoals": [
-    "Configuring or enabling Google Cloud billing, APIs, or API key restrictions.",
-    "Adding any external database or third-party autocomplete/search service."
+    "Changing the overall UI layout/styling of the search bar beyond what is necessary to remove title-based suggestions.",
+    "Reintroducing Google Places or any external autocomplete provider.",
+    "Changing property search filtering behavior (only autocomplete suggestions scope is changing)."
   ],
   "imageRequirements": {
     "required": [],
     "edits": []
-  },
-  "userProfileUpdate": {
-    "goalsToAdd": [],
-    "goalsToRemove": [],
-    "preferencesToAdd": [],
-    "preferencesToRemove": [],
-    "miscToAdd": [],
-    "miscToRemove": [],
-    "fieldsToSet": {},
-    "fieldsToDelete": []
   }
 }

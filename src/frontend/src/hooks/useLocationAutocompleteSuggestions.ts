@@ -1,6 +1,6 @@
 /**
  * Hook that provides location autocomplete suggestions from backend stored properties only.
- * Searches property location and title fields for matches.
+ * Searches property location fields for matches (does not search titles).
  */
 
 import { useBackendAutocompleteSuggestions } from './useQueries';
@@ -12,9 +12,9 @@ interface LocationSuggestionsResult {
 }
 
 /**
- * Hook that provides location autocomplete suggestions from backend stored properties.
+ * Hook that provides location-only autocomplete suggestions from backend stored properties.
  * @param input - The search input string
- * @returns Backend autocomplete suggestions and metadata
+ * @returns Location-only autocomplete suggestions and metadata
  */
 export function useLocationAutocompleteSuggestions(input: string): LocationSuggestionsResult {
   const {
@@ -23,6 +23,7 @@ export function useLocationAutocompleteSuggestions(input: string): LocationSugge
     error: backendError,
   } = useBackendAutocompleteSuggestions(input);
 
+  // Backend already returns location-only suggestions, de-duplicated and limited
   return {
     suggestions: backendSuggestions,
     isLoading: backendLoading,
