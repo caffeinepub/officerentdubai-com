@@ -61,9 +61,12 @@ export interface backendInterface {
     createPropertyWithCode(params: CreatePropertyParams, agentCode: string): Promise<void>;
     deletePropertyWithCode(propertyId: bigint, agentCode: string): Promise<void>;
     getAllProperties(): Promise<Array<Property>>;
-    getBackendLocationSuggestions(input: string, maxResults: bigint | null): Promise<Array<string>>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
+    /**
+     * / AUTOCOMPLETE & SEARCH FUNCTIONALITY
+     */
+    getLocationSuggestions(input: string, maxResults: bigint | null): Promise<Array<string>>;
     getPropertiesByAreaRange(minArea: bigint, maxArea: bigint): Promise<Array<Property>>;
     getPropertiesByFurnishingStatus(status: FurnishingStatus): Promise<Array<Property>>;
     getPropertiesByLocation(location: string): Promise<Array<Property>>;
@@ -74,5 +77,6 @@ export interface backendInterface {
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     isCallerAdmin(): Promise<boolean>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
+    searchPropertiesByLocation(searchTerm: string): Promise<Array<Property>>;
     updatePropertyWithCode(propertyId: bigint, params: CreatePropertyParams, agentCode: string): Promise<void>;
 }

@@ -20,7 +20,7 @@ export default function SiteHeader() {
           </Link>
           <Link to="/agent">
             <Button variant="outline" size="sm" className="gap-2">
-              <Building2 className="h-4 w-4" />
+              <Building2 className="h-4 w-4 text-foreground" />
               Agent Arena
             </Button>
           </Link>

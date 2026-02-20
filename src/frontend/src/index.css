@@ -5,54 +5,54 @@
 @layer base {
     :root {
         --radius: 0.25rem;
-        /* Light Pale Yellow Theme */
-        --background: 0.98 0.05 95;
-        --foreground: 0.20 0.02 0;
-        --card: 0.97 0.06 95;
-        --card-foreground: 0.20 0.02 0;
-        --popover: 0.97 0.06 95;
-        --popover-foreground: 0.20 0.02 0;
-        --primary: 0.92 0.08 95;
-        --primary-foreground: 0.15 0.02 0;
-        --secondary: 0.94 0.07 95;
-        --secondary-foreground: 0.18 0.02 0;
-        --muted: 0.95 0.05 95;
-        --muted-foreground: 0.40 0.02 0;
-        --accent: 0.90 0.08 95;
-        --accent-foreground: 0.15 0.02 0;
+        /* Light Soft Yellow Theme with Pure Black Text */
+        --background: 0.97 0.12 95;
+        --foreground: 0.00 0.00 0;
+        --card: 0.97 0.12 95;
+        --card-foreground: 0.00 0.00 0;
+        --popover: 0.97 0.12 95;
+        --popover-foreground: 0.00 0.00 0;
+        --primary: 0.96 0.14 95;
+        --primary-foreground: 0.00 0.00 0;
+        --secondary: 0.96 0.12 95;
+        --secondary-foreground: 0.00 0.00 0;
+        --muted: 0.95 0.10 95;
+        --muted-foreground: 0.00 0.00 0;
+        --accent: 0.94 0.14 95;
+        --accent-foreground: 0.00 0.00 0;
         --destructive: 0.577 0.245 27.325;
-        --destructive-foreground: 0.98 0.02 0;
-        --border: 0.88 0.06 95;
-        --input: 0.96 0.06 95;
-        --ring: 0.90 0.08 95;
-        --chart-1: 0.92 0.08 95;
-        --chart-2: 0.90 0.07 95;
-        --chart-3: 0.93 0.07 95;
-        --chart-4: 0.94 0.08 95;
-        --chart-5: 0.91 0.07 95;
+        --destructive-foreground: 0.00 0.00 0;
+        --border: 0.88 0.12 95;
+        --input: 0.96 0.12 95;
+        --ring: 0.94 0.14 95;
+        --chart-1: 0.96 0.12 95;
+        --chart-2: 0.95 0.12 95;
+        --chart-3: 0.96 0.14 95;
+        --chart-4: 0.97 0.12 95;
+        --chart-5: 0.95 0.14 95;
     }
 
     .dark {
-        /* Dark mode with subtle warm tones */
-        --background: 0.25 0.03 80;
-        --foreground: 0.95 0.02 95;
-        --card: 0.28 0.04 80;
-        --card-foreground: 0.95 0.02 95;
-        --popover: 0.28 0.04 80;
-        --popover-foreground: 0.95 0.02 95;
-        --primary: 0.88 0.08 95;
-        --primary-foreground: 0.20 0.02 0;
-        --secondary: 0.35 0.04 80;
-        --secondary-foreground: 0.95 0.02 95;
-        --muted: 0.32 0.03 80;
-        --muted-foreground: 0.70 0.02 95;
-        --accent: 0.85 0.08 95;
-        --accent-foreground: 0.20 0.02 0;
+        /* Dark mode matches light theme - light soft yellow with pure black */
+        --background: 0.97 0.12 95;
+        --foreground: 0.00 0.00 0;
+        --card: 0.97 0.12 95;
+        --card-foreground: 0.00 0.00 0;
+        --popover: 0.97 0.12 95;
+        --popover-foreground: 0.00 0.00 0;
+        --primary: 0.96 0.14 95;
+        --primary-foreground: 0.00 0.00 0;
+        --secondary: 0.96 0.12 95;
+        --secondary-foreground: 0.00 0.00 0;
+        --muted: 0.95 0.10 95;
+        --muted-foreground: 0.00 0.00 0;
+        --accent: 0.94 0.14 95;
+        --accent-foreground: 0.00 0.00 0;
         --destructive: 0.577 0.245 27.325;
-        --destructive-foreground: 0.98 0.02 0;
-        --border: 0.35 0.04 80;
-        --input: 0.30 0.04 80;
-        --ring: 0.85 0.08 95;
+        --destructive-foreground: 0.00 0.00 0;
+        --border: 0.88 0.12 95;
+        --input: 0.96 0.12 95;
+        --ring: 0.94 0.14 95;
     }
 
     * {
@@ -61,6 +61,16 @@
     body {
         @apply bg-background text-foreground;
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    /* Force all icons to pure black */
+    svg, .lucide {
+        color: oklch(0.00 0.00 0);
+    }
+
+    /* Ensure icon inheritance respects foreground */
+    button svg, a svg, [role="button"] svg {
+        color: currentColor;
     }
 }
 

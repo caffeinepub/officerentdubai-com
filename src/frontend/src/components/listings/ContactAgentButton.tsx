@@ -23,7 +23,7 @@ export default function ContactAgentButton({ propertyTitle, listingUrl }: Contac
     <Button 
       asChild 
       size="lg" 
-      className="w-full gap-2 bg-[#25D366] hover:bg-[#20BA5A] text-white"
+      className="w-full gap-2"
     >
       <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
         <SiWhatsapp className="h-5 w-5" />
@@ -32,3 +32,4 @@ export default function ContactAgentButton({ propertyTitle, listingUrl }: Contac
     </Button>
   );
 }
+

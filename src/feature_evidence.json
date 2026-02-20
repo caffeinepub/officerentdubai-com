@@ -2,10 +2,10 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-update-the-site-wide-tailwind-oklch-theme-tokens-to-use-a-light-pale-yellow-palette-less-saturated-and-less-intense-than-the-current-hard-yellow-across-the-entire-app-public-portal-agent-arena-by-adjusting-the-css-variables-in-frontend-src-index-css-for-background-foreground-card-popover-primary-secondary-muted-accent-border-input-ring-and-corresponding-foreground-tokens",
-      "featureTitle": "Update the site-wide Tailwind OKLCH theme tokens to use a light/pale yellow palette (less saturated and less intense than the current hard yellow) across the entire app (public portal + Agent Arena), by adjusting the CSS variables in frontend/src/index.css for background/foreground/card/popover/primary/secondary/muted/accent/border/input/ring (and corresponding *-foreground tokens).",
+      "featureId": "feature-update-all-select-item-components-in-propertysearchbar-tsx-to-have-non-empty-value-props-replace-any-empty-string-values-with-meaningful-string-values-while-ensuring-the-search-filter-logic-correctly-handles-both-cleared-states-and-selected-values",
+      "featureTitle": "Update all Select.Item components in PropertySearchBar.tsx to have non-empty value props. Replace any empty string values with meaningful string values while ensuring the search filter logic correctly handles both cleared states and selected values.",
       "files": [
-        "frontend/src/index.css"
+        "frontend/src/components/search/PropertySearchBar.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -17,7 +17,7 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-1"
+        "REQ-2"
       ],
       "confidence": "high"
     }

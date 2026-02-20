@@ -1,10 +1,11 @@
 # Specification
 
 ## Summary
-**Goal:** Reduce the site theme to a softer light/pale yellow palette across the entire app.
+**Goal:** Fix Select.Item validation errors by ensuring all Select.Item components have non-empty value props.
 
 **Planned changes:**
-- Update site-wide Tailwind OKLCH theme CSS variables in `frontend/src/index.css` to use a less saturated, less intense light yellow palette for `background/foreground/card/popover/primary/secondary/muted/accent/border/input/ring` and corresponding `*-foreground` tokens.
-- Ensure the updated palette applies consistently in both default and dark mode without reverting to the previous stronger yellow values.
+- Update Select.Item components in PropertyForm.tsx to use non-empty value props (e.g., 'none', 'unspecified') instead of empty strings
+- Update Select.Item components in PropertySearchBar.tsx to use non-empty value props
+- Ensure Select components can still be cleared and show placeholders using the Select component's built-in empty string handling
 
-**User-visible outcome:** The public portal and Agent Arena display a calmer light/yellow theme with readable text and softer interactive colors (buttons/links) while keeping the same functionality and layout.
+**User-visible outcome:** Users can continue to use property forms and search filters without encountering console validation errors, with all selection clearing and placeholder functionality working as before.

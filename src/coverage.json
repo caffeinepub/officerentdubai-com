@@ -1,24 +1,33 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-17T03:04:54.758Z",
+  "generatedAt": "2026-02-20T06:18:30.971Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 1,
+    "total": 2,
     "implemented": 1,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Update the site-wide Tailwind OKLCH theme tokens to use a light/pale yellow palette (less saturated and less intense than the current hard yellow) across the entire app (public portal + Agent Arena), by adjusting the CSS variables in frontend/src/index.css for background/foreground/card/popover/primary/secondary/muted/accent/border/input/ring (and corresponding *-foreground tokens).",
+        "summary": "Update all Select.Item components in PropertyForm.tsx to have non-empty value props. Replace any empty string values with meaningful string values (e.g., 'none', 'unspecified', or appropriate default values) to prevent Select validation errors while maintaining the ability to clear selections using the Select component's built-in empty string handling.",
+        "status": "missing",
+        "plannedFiles": [
+          "frontend/src/components/agent/PropertyForm.tsx"
+        ],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-2",
+        "summary": "Update all Select.Item components in PropertySearchBar.tsx to have non-empty value props. Replace any empty string values with meaningful string values while ensuring the search filter logic correctly handles both cleared states and selected values.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/index.css"
+          "frontend/src/components/search/PropertySearchBar.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/index.css"
+          "frontend/src/components/search/PropertySearchBar.tsx"
         ]
       }
     ]
@@ -28,7 +37,7 @@
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/index.css",
+    "frontend/src/components/search/PropertySearchBar.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

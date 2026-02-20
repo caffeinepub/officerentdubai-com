@@ -90,14 +90,17 @@ export default function PropertyForm({ initialData, onSubmit, isSubmitting, subm
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="location">Location *</Label>
+              <Label htmlFor="location">Location (Building Name, Area) *</Label>
               <Input
                 id="location"
-                placeholder="e.g., Downtown Dubai"
+                placeholder="e.g., Al Manara Tower, Business Bay"
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
                 required
               />
+              <p className="text-xs text-muted-foreground">
+                Format: Building Name, Area Name
+              </p>
             </div>
 
             <div className="space-y-2">

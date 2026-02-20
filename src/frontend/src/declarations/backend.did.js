@@ -93,13 +93,13 @@ export const idlService = IDL.Service({
   'createPropertyWithCode' : IDL.Func([CreatePropertyParams, IDL.Text], [], []),
   'deletePropertyWithCode' : IDL.Func([IDL.Nat, IDL.Text], [], []),
   'getAllProperties' : IDL.Func([], [IDL.Vec(Property)], ['query']),
-  'getBackendLocationSuggestions' : IDL.Func(
+  'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
+  'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+  'getLocationSuggestions' : IDL.Func(
       [IDL.Text, IDL.Opt(IDL.Nat)],
       [IDL.Vec(IDL.Text)],
       ['query'],
     ),
-  'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
-  'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
   'getPropertiesByAreaRange' : IDL.Func(
       [IDL.Nat, IDL.Nat],
       [IDL.Vec(Property)],
@@ -146,6 +146,11 @@ export const idlService = IDL.Service({
     ),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+  'searchPropertiesByLocation' : IDL.Func(
+      [IDL.Text],
+      [IDL.Vec(Property)],
+      ['query'],
+    ),
   'updatePropertyWithCode' : IDL.Func(
       [IDL.Nat, CreatePropertyParams, IDL.Text],
       [],
@@ -245,13 +250,13 @@ export const idlFactory = ({ IDL }) => {
       ),
     'deletePropertyWithCode' : IDL.Func([IDL.Nat, IDL.Text], [], []),
     'getAllProperties' : IDL.Func([], [IDL.Vec(Property)], ['query']),
-    'getBackendLocationSuggestions' : IDL.Func(
+    'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
+    'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+    'getLocationSuggestions' : IDL.Func(
         [IDL.Text, IDL.Opt(IDL.Nat)],
         [IDL.Vec(IDL.Text)],
         ['query'],
       ),
-    'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
-    'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
     'getPropertiesByAreaRange' : IDL.Func(
         [IDL.Nat, IDL.Nat],
         [IDL.Vec(Property)],
@@ -298,6 +303,11 @@ export const idlFactory = ({ IDL }) => {
       ),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+    'searchPropertiesByLocation' : IDL.Func(
+        [IDL.Text],
+        [IDL.Vec(Property)],
+        ['query'],
+      ),
     'updatePropertyWithCode' : IDL.Func(
         [IDL.Nat, CreatePropertyParams, IDL.Text],
         [],

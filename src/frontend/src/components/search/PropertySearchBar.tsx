@@ -9,7 +9,7 @@ import { useLocationAutocompleteSuggestions } from '../../hooks/useLocationAutoc
 
 interface PropertySearchBarProps {
   onSearch: (filters: {
-    location?: string;
+    locationSearchTerm?: string;
     propertyType?: PropertyType;
     furnishingStatus?: FurnishingStatus;
     minPrice?: bigint;
@@ -21,8 +21,8 @@ interface PropertySearchBarProps {
 
 export default function PropertySearchBar({ onSearch }: PropertySearchBarProps) {
   const [location, setLocation] = useState('');
-  const [propertyType, setPropertyType] = useState<PropertyType | ''>('');
-  const [furnishingStatus, setFurnishingStatus] = useState<FurnishingStatus | ''>('');
+  const [propertyType, setPropertyType] = useState<PropertyType | 'all'>('all');
+  const [furnishingStatus, setFurnishingStatus] = useState<FurnishingStatus | 'all'>('all');
   const [minArea, setMinArea] = useState('');
   const [maxArea, setMaxArea] = useState('');
   const [minPrice, setMinPrice] = useState('');
@@ -41,7 +41,7 @@ export default function PropertySearchBar({ onSearch }: PropertySearchBarProps) 
 
   const handleSearch = () => {
     const filters: {
-      location?: string;
+      locationSearchTerm?: string;
       propertyType?: PropertyType;
       furnishingStatus?: FurnishingStatus;
       minPrice?: bigint;
@@ -50,9 +50,9 @@ export default function PropertySearchBar({ onSearch }: PropertySearchBarProps) 
       maxArea?: bigint;
     } = {};
 
-    if (location.trim()) filters.location = location.trim();
-    if (propertyType) filters.propertyType = propertyType;
-    if (furnishingStatus) filters.furnishingStatus = furnishingStatus;
+    if (location.trim()) filters.locationSearchTerm = location.trim();
+    if (propertyType !== 'all') filters.propertyType = propertyType as PropertyType;
+    if (furnishingStatus !== 'all') filters.furnishingStatus = furnishingStatus as FurnishingStatus;
     if (minArea) filters.minArea = BigInt(minArea);
     if (maxArea) filters.maxArea = BigInt(maxArea);
     if (minPrice) filters.minPrice = BigInt(minPrice);
@@ -91,6 +91,8 @@ export default function PropertySearchBar({ onSearch }: PropertySearchBarProps) 
         e.preventDefault();
         if (highlightedIndex >= 0 && highlightedIndex < suggestions.length) {
           handleSuggestionClick(suggestions[highlightedIndex]);
+        } else {
+          handleSearch();
         }
         break;
       case 'Escape':
@@ -139,11 +141,11 @@ export default function PropertySearchBar({ onSearch }: PropertySearchBarProps) 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {/* Location with Autocomplete */}
         <div className="space-y-2 relative">
-          <Label htmlFor="location">Location</Label>
+          <Label htmlFor="location" className="text-foreground">Location</Label>
           <Input
             ref={inputRef}
             id="location"
-            placeholder="e.g., Downtown Dubai"
+            placeholder="e.g., Business Bay"
             value={location}
             onChange={(e) => handleLocationChange(e.target.value)}
             onKeyDown={handleKeyDown}
@@ -162,21 +164,21 @@ export default function PropertySearchBar({ onSearch }: PropertySearchBarProps) 
               className="absolute z-50 w-full mt-1 bg-background border border-border rounded-md shadow-lg max-h-60 overflow-auto"
             >
               {suggestionsLoading && (
-                <div className="px-4 py-3 text-sm text-muted-foreground flex items-center gap-2">
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                <div className="px-4 py-3 text-sm text-foreground flex items-center gap-2">
+                  <Loader2 className="h-4 w-4 animate-spin text-foreground" />
                   Loading suggestions...
                 </div>
               )}
               
               {suggestionsError && (
                 <div className="px-4 py-3 text-sm text-destructive flex items-center gap-2">
-                  <AlertCircle className="h-4 w-4" />
+                  <AlertCircle className="h-4 w-4 text-destructive" />
                   Could not load suggestions
                 </div>
               )}
               
               {hasNoResults && (
-                <div className="px-4 py-3 text-sm text-muted-foreground">
+                <div className="px-4 py-3 text-sm text-foreground">
                   No matching locations found
                 </div>
               )}
@@ -187,7 +189,7 @@ export default function PropertySearchBar({ onSearch }: PropertySearchBarProps) 
                     <button
                       key={index}
                       type="button"
-                      className={`w-full text-left px-4 py-2 text-sm hover:bg-accent transition-colors ${
+                      className={`w-full text-left px-4 py-2 text-sm text-foreground hover:bg-accent transition-colors ${
                         index === highlightedIndex ? 'bg-accent' : ''
                       }`}
                       onClick={() => handleSuggestionClick(suggestion)}
@@ -200,105 +202,98 @@ export default function PropertySearchBar({ onSearch }: PropertySearchBarProps) 
               )}
             </div>
           )}
-
-          {/* Helper text */}
-          {location.trim().length === 0 && (
-            <p className="text-xs text-muted-foreground mt-1">
-              Suggestions from listed properties
-            </p>
-          )}
         </div>
 
         {/* Property Type */}
         <div className="space-y-2">
-          <Label htmlFor="propertyType">Property Type</Label>
-          <Select
-            value={propertyType}
-            onValueChange={(value) => setPropertyType(value as PropertyType)}
-          >
+          <Label htmlFor="propertyType" className="text-foreground">Property Type</Label>
+          <Select value={propertyType} onValueChange={(value) => setPropertyType(value as PropertyType | 'all')}>
             <SelectTrigger id="propertyType">
-              <SelectValue placeholder="Select type" />
+              <SelectValue placeholder="All Types" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="office">Office</SelectItem>
-              <SelectItem value="retail">Retail</SelectItem>
+              <SelectItem value="all">All Types</SelectItem>
+              <SelectItem value={PropertyType.office}>
+                <div className="flex items-center gap-2">
+                  <img src="/assets/generated/icon-office.dim_256x256.png" alt="" className="h-4 w-4" />
+                  Office
+                </div>
+              </SelectItem>
+              <SelectItem value={PropertyType.retail}>
+                <div className="flex items-center gap-2">
+                  <img src="/assets/generated/icon-retail.dim_256x256.png" alt="" className="h-4 w-4" />
+                  Retail
+                </div>
+              </SelectItem>
             </SelectContent>
           </Select>
         </div>
 
         {/* Furnishing Status */}
         <div className="space-y-2">
-          <Label htmlFor="furnishingStatus">Furnishing Status</Label>
-          <Select
-            value={furnishingStatus}
-            onValueChange={(value) => setFurnishingStatus(value as FurnishingStatus)}
-          >
+          <Label htmlFor="furnishingStatus" className="text-foreground">Furnishing</Label>
+          <Select value={furnishingStatus} onValueChange={(value) => setFurnishingStatus(value as FurnishingStatus | 'all')}>
             <SelectTrigger id="furnishingStatus">
-              <SelectValue placeholder="Select status" />
+              <SelectValue placeholder="All Status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="furnished">Furnished</SelectItem>
-              <SelectItem value="semiFurnished">Semi-Furnished</SelectItem>
-              <SelectItem value="unfurnished">Unfurnished</SelectItem>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value={FurnishingStatus.furnished}>Furnished</SelectItem>
+              <SelectItem value={FurnishingStatus.semiFurnished}>Semi-Furnished</SelectItem>
+              <SelectItem value={FurnishingStatus.unfurnished}>Unfurnished</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
-        {/* Min Area */}
+        {/* Area Range */}
         <div className="space-y-2">
-          <Label htmlFor="minArea">Min Area (sq ft)</Label>
-          <Input
-            id="minArea"
-            type="number"
-            placeholder="e.g., 500"
-            value={minArea}
-            onChange={(e) => setMinArea(e.target.value)}
-          />
+          <Label className="text-foreground">Area (SQFT)</Label>
+          <div className="flex gap-2">
+            <Input
+              type="number"
+              placeholder="Min"
+              value={minArea}
+              onChange={(e) => setMinArea(e.target.value)}
+              min="0"
+            />
+            <Input
+              type="number"
+              placeholder="Max"
+              value={maxArea}
+              onChange={(e) => setMaxArea(e.target.value)}
+              min="0"
+            />
+          </div>
         </div>
 
-        {/* Max Area */}
+        {/* Price Range */}
         <div className="space-y-2">
-          <Label htmlFor="maxArea">Max Area (sq ft)</Label>
-          <Input
-            id="maxArea"
-            type="number"
-            placeholder="e.g., 2000"
-            value={maxArea}
-            onChange={(e) => setMaxArea(e.target.value)}
-          />
+          <Label className="text-foreground">Price (AED)</Label>
+          <div className="flex gap-2">
+            <Input
+              type="number"
+              placeholder="Min"
+              value={minPrice}
+              onChange={(e) => setMinPrice(e.target.value)}
+              min="0"
+            />
+            <Input
+              type="number"
+              placeholder="Max"
+              value={maxPrice}
+              onChange={(e) => setMaxPrice(e.target.value)}
+              min="0"
+            />
+          </div>
         </div>
 
-        {/* Min Price */}
-        <div className="space-y-2">
-          <Label htmlFor="minPrice">Min Price (AED)</Label>
-          <Input
-            id="minPrice"
-            type="number"
-            placeholder="e.g., 50000"
-            value={minPrice}
-            onChange={(e) => setMinPrice(e.target.value)}
-          />
+        {/* Search Button */}
+        <div className="flex items-end">
+          <Button onClick={handleSearch} className="w-full" size="lg">
+            <Search className="h-4 w-4 mr-2" />
+            Search
+          </Button>
         </div>
-
-        {/* Max Price */}
-        <div className="space-y-2">
-          <Label htmlFor="maxPrice">Max Price (AED)</Label>
-          <Input
-            id="maxPrice"
-            type="number"
-            placeholder="e.g., 200000"
-            value={maxPrice}
-            onChange={(e) => setMaxPrice(e.target.value)}
-          />
-        </div>
-      </div>
-
-      {/* Search Button */}
-      <div className="flex justify-center">
-        <Button onClick={handleSearch} size="lg" className="min-w-[200px]">
-          <Search className="mr-2 h-5 w-5" />
-          Search Properties
-        </Button>
       </div>
     </div>
   );

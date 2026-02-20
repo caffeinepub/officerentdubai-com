@@ -1,4 +1,4 @@
-// RealEstate Actor 0.1.5 (with Backend-only Location Suggestions)
+// RealEstate Actor 0.1.7 (Location Search Enhancement)
 import Text "mo:core/Text";
 import Map "mo:core/Map";
 import Iter "mo:core/Iter";
@@ -33,7 +33,7 @@ actor {
   type Property = {
     id : Nat;
     title : Text;
-    location : Text;
+    location : Text; // Format: "<buildingName>, <areaName>"
     propertyType : PropertyType;
     furnishingStatus : FurnishingStatus;
     areaSquareFeet : Nat;
@@ -46,7 +46,7 @@ actor {
 
   type CreatePropertyParams = {
     title : Text;
-    location : Text;
+    location : Text; // Format: "<buildingName>, <areaName>"
     propertyType : PropertyType;
     furnishingStatus : FurnishingStatus;
     areaSquareFeet : Nat;
@@ -158,7 +158,6 @@ actor {
     };
   };
 
-  // Property Management Functions - Changed to accept agent code for authorization
   func isAgent(code : Text) : Bool {
     code == "050702";
   };
@@ -229,27 +228,18 @@ actor {
     };
   };
 
-  // Updated search suggestions to return properties' location values only
-  public query ({ caller }) func getBackendLocationSuggestions(input : Text, maxResults : ?Nat) : async [Text] {
+  /// AUTOCOMPLETE & SEARCH FUNCTIONALITY
+
+  // Returns property suggestions for a given input, ordered by relevance.
+  public query ({ caller }) func getLocationSuggestions(input : Text, maxResults : ?Nat) : async [Text] {
     let lowercaseInput = input.toLower();
     let max = switch (maxResults) {
       case (?value) { value };
       case (null) { 10 };
     };
 
-    // Collect unique location values only and filter by input match (now without title inclusion)
-    let seen = Map.empty<Text, ()>();
     let filtered = properties.values().filter(
-      func(p) {
-        let lowercaseLocation = p.location.toLower();
-        switch (seen.get(lowercaseLocation)) {
-          case (null) {
-            seen.add(lowercaseLocation, ());
-            p.location.toLower().contains(#text lowercaseInput);
-          };
-          case (?_) { false };
-        };
-      }
+      func(p) { p.location.toLower().contains(#text lowercaseInput) }
     );
 
     // Limit results to max count
@@ -257,5 +247,12 @@ actor {
     let locations = limited.map(func(p) { p.location });
     locations.toArray();
   };
-};
 
+  // Returns a list of properties that match the location search term (partial match)
+  public query ({ caller }) func searchPropertiesByLocation(searchTerm : Text) : async [Property] {
+    let lowercaseTerm = searchTerm.toLower();
+    properties.values().toArray().filter(
+      func(p) { p.location.toLower().contains(#text lowercaseTerm) }
+    );
+  };
+};

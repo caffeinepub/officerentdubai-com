@@ -1,37 +1,56 @@
 {
   "kind": "build_request",
-  "title": "Reduce site theme to a light yellow palette",
-  "projectName": "Officer Rent Dubai",
+  "title": "Fix Select.Item empty value prop validation error",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Update the site-wide Tailwind OKLCH theme tokens to use a light/pale yellow palette (less saturated and less intense than the current hard yellow) across the entire app (public portal + Agent Arena), by adjusting the CSS variables in frontend/src/index.css for background/foreground/card/popover/primary/secondary/muted/accent/border/input/ring (and corresponding *-foreground tokens).",
+      "text": "Update all Select.Item components in PropertyForm.tsx to have non-empty value props. Replace any empty string values with meaningful string values (e.g., 'none', 'unspecified', or appropriate default values) to prevent Select validation errors while maintaining the ability to clear selections using the Select component's built-in empty string handling.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-user-final"
         ],
         "quotes": [
-          "its too much colour now change to lite yellow"
+          "A <Select.Item /> must have a value prop that is not an empty string. This is because the Select value can be set to an empty string to clear the selection and show the placeholder."
         ]
       },
       "acceptanceCriteria": [
-        "The global background and surfaces (background/card/popover) render as a light/pale yellow rather than a strong saturated yellow.",
-        "Primary/secondary/accent colors are visibly softer (reduced color intensity) while maintaining clear hierarchy between surfaces and interactive elements (e.g., buttons/links).",
-        "Text remains readable with sufficient contrast against the light yellow backgrounds (foreground and *-foreground tokens are set appropriately).",
-        "The updated palette applies consistently in both default and dark mode (no reversion to the previous hard yellow values)."
+        "All Select.Item components have non-empty string value props",
+        "No validation errors appear in the console regarding Select.Item values",
+        "Select components can still be cleared and show placeholders when needed",
+        "Form functionality for property type, furnishing status, and area selections remains unchanged"
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "Update all Select.Item components in PropertySearchBar.tsx to have non-empty value props. Replace any empty string values with meaningful string values while ensuring the search filter logic correctly handles both cleared states and selected values.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-user-final"
+        ],
+        "quotes": [
+          "A <Select.Item /> must have a value prop that is not an empty string."
+        ]
+      },
+      "acceptanceCriteria": [
+        "All Select.Item components in the search bar have non-empty string value props",
+        "Search filters work correctly with both cleared and selected states",
+        "No validation errors appear for Select.Item components",
+        "Filter placeholders display correctly when no selection is made"
       ]
     }
   ],
   "constraints": [
-    "Do not modify any files under frontend/src/components/ui (shadcn components are read-only and must be composed, not edited).",
-    "Keep changes scoped to visual styling (no functional changes to listings, agent flows, or backend logic)."
+    "Do not modify the Select component itself from frontend/src/components/ui",
+    "Maintain existing form validation logic and search functionality",
+    "Preserve the user experience for clearing selections and showing placeholders"
   ],
   "nonGoals": [
-    "Adding new features or changing application routes/behavior.",
-    "Introducing new authentication or data storage changes.",
-    "Creating or editing image assets as part of this color adjustment."
+    "Changing the overall form or search bar structure",
+    "Modifying backend data models or validation",
+    "Redesigning the Select component UI"
   ],
   "imageRequirements": {
     "required": [],

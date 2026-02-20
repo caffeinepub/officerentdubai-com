@@ -14,7 +14,7 @@ export default function SiteFooter() {
             © {currentYear} OfficeRentDubai.com. All rights reserved.
           </p>
           <p className="text-sm text-foreground flex items-center gap-1">
-            Built with <Heart className="h-4 w-4 text-foreground fill-foreground" /> using{' '}
+            Built with <Heart className="h-4 w-4 text-foreground fill-foreground stroke-foreground" /> using{' '}
             <a
               href={`https://caffeine.ai/?utm_source=Caffeine-footer&utm_medium=referral&utm_content=${appIdentifier}`}
               target="_blank"

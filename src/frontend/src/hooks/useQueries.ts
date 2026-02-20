@@ -69,8 +69,8 @@ export function useBackendAutocompleteSuggestions(input: string) {
       if (!actor) throw new Error('Actor not available');
       
       try {
-        // Pass null for maxResults to use backend default (10)
-        const results = await actor.getBackendLocationSuggestions(debouncedInput, null);
+        // Use getLocationSuggestions with null for maxResults to use backend default (10)
+        const results = await actor.getLocationSuggestions(debouncedInput, null);
         return results;
       } catch (error) {
         const normalized = normalizeBackendError(error);
@@ -100,8 +100,22 @@ export function useGetAllProperties() {
   });
 }
 
+export function useSearchPropertiesByLocation(searchTerm: string) {
+  const { actor, isFetching: actorFetching } = useActor();
+
+  return useQuery<Property[]>({
+    queryKey: ['properties', 'searchByLocation', searchTerm],
+    queryFn: async () => {
+      if (!actor) return [];
+      if (!searchTerm.trim()) return [];
+      return actor.searchPropertiesByLocation(searchTerm);
+    },
+    enabled: !!actor && !actorFetching && searchTerm.trim().length > 0,
+  });
+}
+
 export function useSearchProperties(filters: {
-  location?: string;
+  locationSearchTerm?: string;
   propertyType?: PropertyType;
   furnishingStatus?: FurnishingStatus;
   minPrice?: bigint;
@@ -113,7 +127,7 @@ export function useSearchProperties(filters: {
 
   // Convert bigints to strings for query key
   const queryKey = ['properties', 'search', {
-    location: filters.location,
+    locationSearchTerm: filters.locationSearchTerm,
     propertyType: filters.propertyType,
     furnishingStatus: filters.furnishingStatus,
     minPrice: filters.minPrice?.toString(),
@@ -127,19 +141,14 @@ export function useSearchProperties(filters: {
     queryFn: async () => {
       if (!actor) return [];
       
-      const { location, propertyType, furnishingStatus, minPrice, maxPrice, minArea, maxArea } = filters;
+      const { locationSearchTerm, propertyType, furnishingStatus, minPrice, maxPrice, minArea, maxArea } = filters;
       
-      // If all filters are provided
-      if (location && propertyType && furnishingStatus && minPrice !== undefined && maxPrice !== undefined && minArea !== undefined && maxArea !== undefined) {
-        return actor.getPropertiesWithFullFilters(location, propertyType, furnishingStatus, minPrice, maxPrice, minArea, maxArea);
-      }
-      
-      // Get all properties and apply filters client-side
-      let properties = await actor.getAllProperties();
-      
-      // Apply location filter
-      if (location) {
-        properties = properties.filter(p => p.location === location);
+      // Start with location-based search if provided, otherwise get all properties
+      let properties: Property[];
+      if (locationSearchTerm && locationSearchTerm.trim()) {
+        properties = await actor.searchPropertiesByLocation(locationSearchTerm);
+      } else {
+        properties = await actor.getAllProperties();
       }
       
       // Apply property type filter

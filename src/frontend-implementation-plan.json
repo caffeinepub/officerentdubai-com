@@ -1,22 +1,39 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Light/pale yellow Tailwind OKLCH theme update",
+  "title": "Fix Select.Item empty value prop validation error",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Soften the global Tailwind OKLCH theme palette to a light/pale yellow by updating the CSS variable tokens (light + dark mode) in frontend/src/index.css.",
+      "summary": "Update all Select.Item components in PropertyForm.tsx to use non-empty value props, replacing empty strings with meaningful values like 'none' or 'unspecified' to prevent validation errors while maintaining clearable Select functionality",
       "acceptanceCriteria": [
-        "The global background and surfaces (background/card/popover) render as a light/pale yellow rather than a strong saturated yellow.",
-        "Primary/secondary/accent colors are visibly softer (reduced color intensity) while maintaining clear hierarchy between surfaces and interactive elements (e.g., buttons/links).",
-        "Text remains readable with sufficient contrast against the light yellow backgrounds (foreground and *-foreground tokens are set appropriately).",
-        "The updated palette applies consistently in both default and dark mode (no reversion to the previous hard yellow values)."
+        "All Select.Item components have non-empty string value props",
+        "No validation errors appear in the console regarding Select.Item values",
+        "Select components can still be cleared and show placeholders when needed",
+        "Form functionality for property type, furnishing status, and area selections remains unchanged"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/index.css",
+          "path": "frontend/src/components/agent/PropertyForm.tsx",
           "operation": "modify",
-          "description": "Adjust the OKLCH CSS variables for background/foreground/card/popover/primary/secondary/muted/accent/border/input/ring and corresponding *-foreground tokens to a less saturated, less intense light/pale yellow palette; update both :root and .dark blocks to ensure consistent theming across public portal + Agent Arena without touching any shadcn UI component files."
+          "description": "Replace empty string value props in all Select.Item components with meaningful non-empty values. For property type Select.Items, use values like 'none' for the placeholder item. For furnishing status Select.Items, use 'none' or 'unspecified' for the placeholder. For area range Select.Items, use 'none' for the placeholder option. Ensure the form state handling and validation logic correctly processes these new non-empty placeholder values, treating them equivalently to cleared/unselected states. Update any conditional logic that checks for empty strings to also recognize the new placeholder values."
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "Update all Select.Item components in PropertySearchBar.tsx to use non-empty value props, ensuring search filter logic correctly handles both cleared states and selected values with the new placeholder values",
+      "acceptanceCriteria": [
+        "All Select.Item components in the search bar have non-empty string value props",
+        "Search filters work correctly with both cleared and selected states",
+        "No validation errors appear for Select.Item components",
+        "Filter placeholders display correctly when no selection is made"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/search/PropertySearchBar.tsx",
+          "operation": "modify",
+          "description": "Replace empty string value props in all Select.Item components with meaningful non-empty values such as 'none', 'any', or 'all'. Update the search filter logic to treat these new placeholder values as 'no filter applied' states. Ensure that when a Select is cleared or set to a placeholder value, the corresponding filter is not applied to the property search results. Verify that the location autocomplete, property type filter, furnishing status filter, area range filter, and price range filter all work correctly with the new non-empty placeholder values."
         }
       ]
     }

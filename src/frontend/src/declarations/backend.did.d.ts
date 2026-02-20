@@ -80,12 +80,15 @@ export interface _SERVICE {
   >,
   'deletePropertyWithCode' : ActorMethod<[bigint, string], undefined>,
   'getAllProperties' : ActorMethod<[], Array<Property>>,
-  'getBackendLocationSuggestions' : ActorMethod<
+  'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
+  'getCallerUserRole' : ActorMethod<[], UserRole>,
+  /**
+   * / AUTOCOMPLETE & SEARCH FUNCTIONALITY
+   */
+  'getLocationSuggestions' : ActorMethod<
     [string, [] | [bigint]],
     Array<string>
   >,
-  'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
-  'getCallerUserRole' : ActorMethod<[], UserRole>,
   'getPropertiesByAreaRange' : ActorMethod<[bigint, bigint], Array<Property>>,
   'getPropertiesByFurnishingStatus' : ActorMethod<
     [FurnishingStatus],
@@ -102,6 +105,7 @@ export interface _SERVICE {
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
+  'searchPropertiesByLocation' : ActorMethod<[string], Array<Property>>,
   'updatePropertyWithCode' : ActorMethod<
     [bigint, CreatePropertyParams, string],
     undefined

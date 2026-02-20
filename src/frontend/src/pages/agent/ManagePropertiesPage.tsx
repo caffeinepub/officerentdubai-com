@@ -46,18 +46,18 @@ function ManagePropertiesContent() {
           <div>
             <Link to="/agent/dashboard">
               <Button variant="ghost" className="gap-2 mb-4">
-                <ArrowLeft className="h-4 w-4" />
+                <ArrowLeft className="h-4 w-4 text-foreground" />
                 Back to Dashboard
               </Button>
             </Link>
-            <h1 className="text-3xl font-bold">Manage Properties</h1>
-            <p className="text-muted-foreground mt-1">
+            <h1 className="text-3xl font-bold text-foreground">Manage Properties</h1>
+            <p className="text-foreground mt-1">
               {properties.length} {properties.length === 1 ? 'property' : 'properties'} listed
             </p>
           </div>
           <Link to="/agent/properties/new">
             <Button className="gap-2">
-              <Plus className="h-4 w-4" />
+              <Plus className="h-4 w-4 text-foreground" />
               Add Property
             </Button>
           </Link>
@@ -65,17 +65,17 @@ function ManagePropertiesContent() {
 
         {isLoading ? (
           <div className="flex items-center justify-center py-20">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <Loader2 className="h-8 w-8 animate-spin text-foreground" />
           </div>
         ) : properties.length === 0 ? (
           <Card className="text-center py-12">
             <CardContent>
-              <p className="text-lg text-muted-foreground mb-4">
+              <p className="text-lg text-foreground mb-4">
                 You haven't listed any properties yet
               </p>
               <Link to="/agent/properties/new">
                 <Button className="gap-2">
-                  <Plus className="h-4 w-4" />
+                  <Plus className="h-4 w-4 text-foreground" />
                   Create Your First Listing
                 </Button>
               </Link>
@@ -100,21 +100,21 @@ function ManagePropertiesContent() {
                   </div>
                   <CardContent className="p-4 space-y-2">
                     <div className="flex items-start justify-between gap-2">
-                      <h3 className="font-semibold text-lg line-clamp-1">{property.title}</h3>
+                      <h3 className="font-semibold text-lg line-clamp-1 text-foreground">{property.title}</h3>
                       <Badge variant="secondary" className="shrink-0">
                         {propertyTypeLabel}
                       </Badge>
                     </div>
-                    <p className="text-sm text-muted-foreground line-clamp-1">
+                    <p className="text-sm text-foreground line-clamp-1">
                       {property.location}
                     </p>
                     <div className="flex items-baseline gap-2">
-                      <span className="text-2xl font-bold text-primary">
+                      <span className="text-2xl font-bold text-foreground">
                         AED {Number(property.price).toLocaleString()}
                       </span>
-                      <span className="text-sm text-muted-foreground">/year</span>
+                      <span className="text-sm text-foreground">/year</span>
                     </div>
-                    <div className="text-sm text-muted-foreground">
+                    <div className="text-sm text-foreground">
                       {Number(property.areaSquareFeet).toLocaleString()} sq ft
                     </div>
                   </CardContent>
@@ -125,14 +125,14 @@ function ManagePropertiesContent() {
                       className="flex-1"
                     >
                       <Button variant="outline" className="w-full gap-2">
-                        <Edit className="h-4 w-4" />
+                        <Edit className="h-4 w-4 text-foreground" />
                         Edit
                       </Button>
                     </Link>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button variant="destructive" className="gap-2">
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className="h-4 w-4 text-foreground" />
                           Delete
                         </Button>
                       </AlertDialogTrigger>
