@@ -1,0 +1,39 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Change app theme to white color",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "summary": "Replace the current saturated yellow theme with a clean white theme across the entire application by updating CSS color tokens to use white/near-white backgrounds, dark text, and neutral gray accents",
+      "acceptanceCriteria": [
+        "All page backgrounds render as white or near-white (no yellow tones visible)",
+        "The sticky header background is white",
+        "Property cards have a white or light gray background",
+        "Hero section background is white or very light",
+        "Buttons and interactive elements use neutral/gray or subtle accent colors — no yellow",
+        "Text remains readable with sufficient contrast on white backgrounds",
+        "Both light and dark mode CSS tokens are updated consistently",
+        "The footer background matches the white theme",
+        "Agent dashboard and form pages also use the white theme"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Update CSS custom properties in the :root selector to replace yellow-based OKLCH color tokens with white/near-white backgrounds (OKLCH lightness 98-100%, chroma 0-0.01), keep foreground/text as near-black (OKLCH lightness 10-15%, chroma 0), and change accent colors to neutral grays or subtle off-white tones. Update both light and dark mode color definitions to ensure no yellow backgrounds remain. Ensure primary, secondary, muted, accent, card, and popover background colors all use white or very light neutral tones. Maintain sufficient contrast ratios for accessibility."
+        },
+        {
+          "path": "frontend/index.css",
+          "operation": "modify",
+          "description": "Update the Tailwind CSS layers and any additional color token definitions to match the white theme. Replace any yellow-based color values in background, border, or accent utilities with white/near-white (OKLCH lightness 98-100%, chroma 0-0.01) and neutral gray tones. Ensure consistency with frontend/src/index.css color tokens and remove all yellow color references."
+        },
+        {
+          "path": "frontend/tailwind.config.js",
+          "operation": "modify",
+          "description": "Review and update the theme.extend.colors section to ensure all custom color definitions align with the white theme. Replace any yellow-based color extensions with neutral white, light gray, or off-white values. Verify that the color system integrates properly with the updated CSS custom properties in index.css files."
+        }
+      ]
+    }
+  ]
+}

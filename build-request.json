@@ -1,0 +1,45 @@
+{
+  "kind": "build_request",
+  "title": "Change app theme to white color",
+  "projectName": "Office Rent Dubai",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "text": "Replace the current saturated yellow theme with a clean white theme across the entire application. Update the CSS color tokens in frontend/src/index.css and frontend/index.css so that backgrounds use white/near-white tones (OKLCH with high lightness, zero or near-zero chroma), foreground/text remains dark (near-black), and accent/interactive colors shift to neutral grays or a subtle off-white palette. Ensure no yellow background colors remain on cards, headers, hero sections, buttons, or any UI element.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-7"
+        ],
+        "quotes": [
+          "make the theme white colour"
+        ]
+      },
+      "acceptanceCriteria": [
+        "All page backgrounds render as white or near-white (no yellow tones visible)",
+        "The sticky header background is white",
+        "Property cards have a white or light gray background",
+        "Hero section background is white or very light",
+        "Buttons and interactive elements use neutral/gray or subtle accent colors — no yellow",
+        "Text remains readable with sufficient contrast on white backgrounds",
+        "Both light and dark mode CSS tokens are updated consistently",
+        "The footer background matches the white theme",
+        "Agent dashboard and form pages also use the white theme"
+      ]
+    }
+  ],
+  "constraints": [
+    "Do not modify any files under frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or frontend/src/components/ui",
+    "Do not alter backend logic or data models"
+  ],
+  "nonGoals": [
+    "Adding new features or UI components",
+    "Changing layout structure or typography scale",
+    "Modifying backend code"
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  }
+}
